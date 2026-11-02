@@ -9,3 +9,4 @@
 - [ ] App-shell och senaste ban-dokument cachas av service workern
 - [ ] Bansökning och hålvyn fungerar helt offline med cachad data (GPS live)
 - [ ] Cachen uppdateras när ny bandata hämtas med nätverk
+- [ ] Playwright-test: efter första laddning (produktionsbuild med service worker) fungerar bansökning och hålvy med nätverket avstängt (ADR-0004)

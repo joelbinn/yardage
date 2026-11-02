@@ -11,3 +11,4 @@
 - [ ] Alfabetisk fallback när platsåtkomst nekas eller saknas
 - [ ] Val av bana navigerar vidare i Spelläget
 - [ ] Enhetstester för centroid- och sorteringslogik
+- [ ] Playwright-test: med emulerad geolocation sorteras banorna närmast-först; filtret fungerar; nekad platsåtkomst ger alfabetisk lista (ADR-0004)

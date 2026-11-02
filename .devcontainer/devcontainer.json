@@ -1,0 +1,60 @@
+{
+  "name": "Yardage",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "CLAUDE_CODE_VERSION": "latest"
+    }
+  },
+  "remoteUser": "node",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/yardage,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspaces/yardage",
+
+  // NET_ADMIN/NET_RAW krävs av init-firewall.sh
+  "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
+
+  "mounts": [
+    // Named volumes — överlever rebuild
+    "source=yardage-node_modules,target=/workspaces/yardage/node_modules,type=volume",
+    "source=yardage-claude-state,target=/home/node/.claude,type=volume",
+    "source=yardage-config,target=/home/node/.config,type=volume",
+    // Hostens globala Claude-instruktioner och skills, read-only.
+    // ~/.claude/skills innehåller symlänkar till ~/.agents/skills, därför monteras båda.
+    "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/node/.claude/CLAUDE.md,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
+    "source=${localEnv:HOME}/.agents/skills,target=/home/node/.agents/skills,type=bind,readonly",
+    // Hostens ~/CLAUDE.md läses av Claude Code som förälderkatalogens CLAUDE.md
+    "source=${localEnv:HOME}/CLAUDE.md,target=/workspaces/CLAUDE.md,type=bind,readonly"
+  ],
+
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "GIT_CONFIG_GLOBAL": "/home/node/.config/git/config",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
+
+  "forwardPorts": [4200],
+  "portsAttributes": {
+    "4200": { "label": "ng serve", "onAutoForward": "notify" }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand",
+
+  "customizations": {
+    "jetbrains": {
+      "backend": "WebStorm"
+    },
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-playwright.playwright",
+        "vitest.explorer",
+        "anthropic.claude-code"
+      ]
+    }
+  }
+}

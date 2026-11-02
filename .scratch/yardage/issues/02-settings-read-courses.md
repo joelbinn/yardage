@@ -11,3 +11,4 @@
 - [ ] Banor listas efter att ett data-repo med ett ban-dokument konfigurerats
 - [ ] Tydligt meddelande när ban-dokumentet saknas eller repot inte nås
 - [ ] Enhetstester för tolkning/validering av ban-dokumentet
+- [ ] Playwright-test: konfigurera data-repo och token på `/settings`, banor läses från mockad raw-URL och listas; mockad 404 ger fallback-meddelandet (ADR-0004)

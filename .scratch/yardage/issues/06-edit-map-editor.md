@@ -11,3 +11,4 @@
 - [ ] Klick på kartan sätter greenpunkten för det aktiva hålet
 - [ ] Befintliga greenpunkter är dragbara markörer
 - [ ] Par kan anges valfritt per hål
+- [ ] Playwright-test: klick på kartan sätter greenpunkt för aktivt hål och markör kan dras (Esri-tiles mockade) (ADR-0004)

@@ -10,3 +10,4 @@
 - [ ] Skapa bana: namn + hålantal (9 eller 18), hålen numrerade från 1
 - [ ] Ta bort bana ur listan (i minnet)
 - [ ] Välj bana för redigering
+- [ ] Playwright-test: skapa 9- och 18-hålsbana och ta bort en bana i listan (mockad läsning) (ADR-0004)

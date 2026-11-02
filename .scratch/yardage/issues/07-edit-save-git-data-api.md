@@ -10,3 +10,4 @@
 - [ ] Data-repot har efter varje save exakt en commit i historiken
 - [ ] Saknad/ogiltig token ger tydlig vägledning till inställningssidan
 - [ ] Enhetstester för GitHubService med mockade API-anrop (inkl. force-update av ref)
+- [ ] Playwright-test: spara skickar blob → tree → commit (utan parent) → ref-update mot mockat GitHub API; saknad token visar vägledning (ADR-0004)
