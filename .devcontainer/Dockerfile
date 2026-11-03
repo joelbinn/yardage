@@ -1,6 +1,6 @@
 # Yardage devcontainer — reproducerbar miljö och sandlåda för AI-agenter.
 # Node 24 LTS uppfyller Angular 22:s Node-krav.
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-24-bookworm
+FROM mcr.microsoft.com/devcontainers/typescript-node:5-24-bookworm
 
 ARG CLAUDE_CODE_VERSION=latest
 

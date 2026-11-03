@@ -4,8 +4,6 @@ set -euo pipefail
 
 sudo /usr/local/bin/fix-volume-perms.sh
 
-mkdir -p /home/node/.config/git
-
 git config --global --get-all safe.directory | grep -qx /workspaces/yardage \
   || git config --global --add safe.directory /workspaces/yardage
 

@@ -17,7 +17,6 @@ ALLOWED_DOMAINS=(
   release-assets.githubusercontent.com
   # Anthropic / Claude Code
   api.anthropic.com
-  statsig.anthropic.com
   console.anthropic.com
   platform.claude.com
   claude.ai
@@ -35,6 +34,14 @@ ALLOWED_DOMAINS=(
 )
 
 log() { echo "[init-firewall] $*"; }
+
+# Fail-closed: avbryts skriptet någonstans lämnas nätverket stängt, aldrig öppet.
+lock_down() {
+  iptables -P INPUT DROP 2>/dev/null || true
+  iptables -P FORWARD DROP 2>/dev/null || true
+  iptables -P OUTPUT DROP 2>/dev/null || true
+}
+trap lock_down EXIT
 
 save_docker_dns_rules() {
   iptables-save -t nat | grep "127\.0\.0\.11" || true
@@ -59,13 +66,14 @@ reset_rules() {
 }
 
 allow_baseline() {
-  # DNS, SSH och loopback
-  iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-  iptables -A INPUT -p udp --sport 53 -j ACCEPT
-  iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
-  iptables -A INPUT -p tcp --sport 53 -j ACCEPT
-  iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
-  iptables -A INPUT -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+  # DNS endast mot containerns resolvers (förhindrar DNS-tunnling till godtyckliga servrar)
+  local ns
+  for ns in $(awk '/^nameserver/ {print $2}' /etc/resolv.conf | grep -E '^[0-9.]+$'); do
+    iptables -A OUTPUT -p udp --dport 53 -d "$ns" -j ACCEPT
+    iptables -A OUTPUT -p tcp --dport 53 -d "$ns" -j ACCEPT
+  done
+  iptables -A INPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+  iptables -A INPUT -p tcp --sport 53 -m state --state ESTABLISHED -j ACCEPT
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A OUTPUT -o lo -j ACCEPT
 }
@@ -96,15 +104,15 @@ add_domain() {
 }
 
 allow_host_network() {
-  local host_ip host_net
+  # Endast hostens gateway-IP, inte hela subnätet
+  local host_ip
   host_ip=$(ip route | awk '/default/ {print $3; exit}')
   if [ -z "$host_ip" ]; then
     log "ERROR: hittade ingen default-route"
     exit 1
   fi
-  host_net=$(echo "$host_ip" | sed 's/\.[0-9]*$/.0\/24/')
-  iptables -A INPUT -s "$host_net" -j ACCEPT
-  iptables -A OUTPUT -d "$host_net" -j ACCEPT
+  iptables -A INPUT -s "$host_ip" -j ACCEPT
+  iptables -A OUTPUT -d "$host_ip" -j ACCEPT
 }
 
 apply_default_deny() {

@@ -10,8 +10,14 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/yardage,type=bind,consistency=delegated",
   "workspaceFolder": "/workspaces/yardage",
 
-  // NET_ADMIN/NET_RAW krävs av init-firewall.sh
-  "runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"],
+  // NET_ADMIN/NET_RAW krävs av init-firewall.sh.
+  // Port 4200 (ng serve) publiceras med Docker, bara på hostens loopback — JetBrains
+  // tillämpar inte forwardPorts, och en egen forward i VS Code skulle krocka med denna.
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW",
+    "-p", "127.0.0.1:4200:4200"
+  ],
 
   "mounts": [
     // Named volumes — överlever rebuild
@@ -29,13 +35,8 @@
 
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
-    "GIT_CONFIG_GLOBAL": "/home/node/.config/git/config",
+    "GIT_CONFIG_GLOBAL": "/home/node/.config/gitconfig",
     "NODE_OPTIONS": "--max-old-space-size=4096"
-  },
-
-  "forwardPorts": [4200],
-  "portsAttributes": {
-    "4200": { "label": "ng serve", "onAutoForward": "notify" }
   },
 
   "postCreateCommand": "bash .devcontainer/post-create.sh",

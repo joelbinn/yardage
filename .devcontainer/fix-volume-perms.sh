@@ -4,7 +4,9 @@
 set -euo pipefail
 
 for dir in /workspaces/yardage/node_modules /home/node/.claude /home/node/.config; do
-  if [ -d "$dir" ]; then
-    chown node:node "$dir"
+  # Aldrig symlänkar; bara riktiga monteringspunkter (skydd mot symlink-chown via sudo)
+  if [ -L "$dir" ] || ! mountpoint -q "$dir"; then
+    continue
   fi
+  chown -h node:node -- "$dir"
 done
