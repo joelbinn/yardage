@@ -4,15 +4,15 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-human
+**Status:** resolved
 
-- [ ] `.devcontainer/` med `Dockerfile`, `devcontainer.json`, `init-firewall.sh` och `post-create.sh`
-- [ ] Containern bygger och startar via JetBrains och via `devcontainer up`
-- [ ] Brandväggen är på som standard och släpper bara igenom allowlistan
-- [ ] Volumes för `node_modules`, `~/.claude`-state och `~/.config` (gh + git) överlever rebuild
-- [ ] Hostens `CLAUDE.md` och skills är read-only i containern
-- [ ] `README.md` beskriver setup: öppna i container, `gh auth login` med fine-grained PAT, `claude` login
-- [ ] Samtliga acceptanstestfall nedan är genomgångna och godkända
+- [x] `.devcontainer/` med `Dockerfile`, `devcontainer.json`, `init-firewall.sh` och `post-create.sh`
+- [x] Containern bygger och startar via JetBrains och via `devcontainer up`
+- [x] Brandväggen är på som standard och släpper bara igenom allowlistan
+- [x] Volumes för `node_modules`, `~/.claude`-state och `~/.config` (gh + git) överlever rebuild
+- [x] Hostens `CLAUDE.md` och skills är read-only i containern
+- [x] `README.md` beskriver setup: öppna i container, `gh auth login` med fine-grained PAT, `claude` login
+- [x] Samtliga acceptanstestfall nedan är genomgångna och godkända
 
 ## Acceptanstestfall
 
@@ -35,3 +35,13 @@ Körs manuellt. Kommandon körs i en terminal **inuti** containern om inget anna
 | AT-13 | Claude i bypass-läge | `type claude`; starta `claude` och be den köra `ls` | Aliaset inkluderar `--dangerously-skip-permissions`; inga behörighetsfrågor visas. På hosten är projektets `.claude/settings.json` oförändrad |
 | AT-14 | Minimal PAT-scope | `gh auth status`; `git push --dry-run` i `yardage`; försök `gh api -X PUT repos/<owner>/<annat-repo>/contents/x.txt -f message=t -f content=dA==` | Token visas; push mot `yardage` tillåts; skrivning till annat repo nekas (403/404) |
 | AT-15 | Utveckling startar i containern | `git status` och `git log -1` i `/workspaces/yardage` | Fungerar utan *dubious ownership*-fel; ändringar syns direkt på hosten |
+
+## Comments
+
+Acceptanstestad manuellt (AT-01 till AT-15), alla godkända. Avvikelser från ursprunglig design som testerna ledde till:
+
+- Bas-imagen är `typescript-node:5-24-bookworm`; taggarna `1-*` finns inte längre.
+- `GIT_CONFIG_GLOBAL` pekar på `~/.config/gitconfig` (inte `~/.config/git/config`), eftersom JetBrains skriver git-konfigurationen före `post-create`.
+- Port 4200 publiceras med `-p 127.0.0.1:4200:4200` i `runArgs`; JetBrains tillämpar inte `forwardPorts`.
+- Efter säkerhetsgranskning: brandväggen är fail-closed, DNS är begränsat till containerns resolvers, SSH-egress är borttagen och endast hostens gateway-IP tillåts.
+- Claude Code-inloggning: kopiera hela OAuth-länken manuellt; en radbruten länk ger "Missing scope parameter".

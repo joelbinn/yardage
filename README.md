@@ -53,7 +53,7 @@ Nollställ med `docker volume rm <namn>` på hosten.
 
 ### Portar
 
-`4200` forwardas. Kör `ng serve --host 0.0.0.0` i containern och öppna `http://localhost:4200` på hosten.
+`4200` publiceras på hostens `127.0.0.1` (via `runArgs`). Kör `ng serve --host 0.0.0.0` i containern och öppna `http://localhost:4200` på hosten.
 
 ### Acceptanstest
 
