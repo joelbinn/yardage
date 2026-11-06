@@ -4,10 +4,14 @@
 
 **Blocked by:** 00 (Devcontainer)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] `npm run deploy` bygger och publicerar appen på GitHub Pages (base-href `/yardage/`)
-- [ ] Startsiden länkar till Redigeringsläge, Spelläge och Inställningar (platshållarvyer)
-- [ ] UI:t är på svenska
-- [ ] PWA-manifest med appnamnet "Yardage" finns och bygget går igenom
-- [ ] Playwright-test: startsidan visas på svenska och länkarna till `/edit`, `/play` och `/settings` navigerar (inkl. Playwright-uppsättning: `playwright.config.ts` med `webServer`, Chromium, `npm run e2e`; Vitest + jsdom för enhetstester) (ADR-0004)
+- [x] `npm run deploy` bygger och publicerar appen på GitHub Pages (base-href `/yardage/`)
+- [x] Startsiden länkar till Redigeringsläge, Spelläge och Inställningar (platshållarvyer)
+- [x] UI:t är på svenska
+- [x] PWA-manifest med appnamnet "Yardage" finns och bygget går igenom
+- [x] Playwright-test: startsidan visas på svenska och länkarna till `/edit`, `/play` och `/settings` navigerar (inkl. Playwright-uppsättning: `playwright.config.ts` med `webServer`, Chromium, `npm run e2e`; Vitest + jsdom för enhetstester) (ADR-0004)
+
+## Comments
+
+Implementerad och verifierad i en separat katalog `frontend/` med Angular 22 (standalone-komponenter, signals, routing, Vitest + jsdom, PWA-manifest) och Playwright E2E-tester. Deploy till `gh-pages` testad och publicerad med `npm run deploy`.

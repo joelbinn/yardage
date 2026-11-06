@@ -1,0 +1,13 @@
+{
+  "name": "yardage",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Webbapp för golfare som visar avståndet i meter från spelarens position till green.",
+  "scripts": {
+    "start": "npm start --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "test": "npm test --prefix frontend",
+    "e2e": "npm run e2e --prefix frontend",
+    "deploy": "npm run deploy --prefix frontend"
+  }
+}
