@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "e2e": "playwright test",
+    "check": "npm test && npm run e2e && npm run build",
     "deploy": "ng deploy --base-href=/yardage/"
   },
   "private": true,

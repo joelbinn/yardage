@@ -8,6 +8,7 @@
     "build": "npm run build --prefix frontend",
     "test": "npm test --prefix frontend",
     "e2e": "npm run e2e --prefix frontend",
+    "check": "npm run check --prefix frontend",
     "deploy": "npm run deploy --prefix frontend"
   }
 }

@@ -2,6 +2,10 @@
 
 ## Agent skills
 
+### Kodbas
+
+Frontend-koden bor i `frontend/`. Rotskripten i `package.json` delegerar dit via `--prefix frontend`.
+
 ### Issue tracker
 
 Issues spåras som lokal markdown under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
