@@ -8,8 +8,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "e2e": "playwright test",
-    "check": "npm test && npm run e2e && npm run build",
-    "deploy": "ng deploy --base-href=/yardage/"
+    "check": "npm run lint && npm test && npm run e2e && npm run build",
+    "deploy": "ng deploy --base-href=/yardage/",
+    "lint": "eslint . && npm run lint:lockfile",
+    "lint:lockfile": "lockfile-lint --path package-lock.json --type npm --allowed-hosts npm --validate-https",
+    "precommit": "npm run lint && npm test"
   },
   "private": true,
   "packageManager": "npm@11.20.0",
@@ -28,12 +31,18 @@
     "@angular/build": "^22.2.6",
     "@angular/cli": "^22.2.6",
     "@angular/compiler-cli": "^22.2.0",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.0",
     "angular-cli-ghpages": "^3.1.2",
+    "angular-eslint": "^22.6.0",
+    "eslint": "^10.14.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
     "jsdom": "^30.0.0",
+    "lockfile-lint": "^5.1.0",
     "playwright": "^1.65.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
+    "typescript-eslint": "^8.72.1",
     "vitest": "^5.0.0"
   }
 }
