@@ -4,7 +4,7 @@
 
 ### Kodbas
 
-Frontend-koden bor i `frontend/`. Rotskripten i `package.json` delegerar dit via `--prefix frontend`.
+Frontend-koden bor i `frontend/`. Rotskripten i `package.json` delegerar dit via `--prefix frontend`. `npm run check` är hela guardrailen (lint, enhetstester, Playwright, build).
 
 ### Issue tracker
 
