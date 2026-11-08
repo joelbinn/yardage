@@ -70,3 +70,122 @@ body {
 .back-link:hover {
   text-decoration: underline;
 }
+
+button.btn {
+  width: 100%;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Sidor och kort */
+.page h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.page h4 {
+  margin: 1rem 0 0.25rem;
+  font-size: 1rem;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.hint {
+  color: #4b5563;
+  margin-top: 0;
+}
+
+.info {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.5rem;
+  padding: 0 1rem 0.75rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.info ul,
+.info ol {
+  padding-left: 1.25rem;
+}
+
+/* Formulär */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+
+.field input {
+  font: inherit;
+  font-weight: 400;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+}
+
+.field input:focus {
+  outline: 2px solid #15803d;
+  outline-offset: 1px;
+}
+
+/* Meddelanden */
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  line-height: 1.5;
+}
+
+.message.error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.token-state {
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* Banlista */
+.course-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.course-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+}
+
+.course-name {
+  font-weight: 600;
+}
+
+.course-holes {
+  color: #4b5563;
+}

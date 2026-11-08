@@ -3,15 +3,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { routes } from './app.routes';
 import { App } from './app';
+import { provideAdapters } from './infrastructure/provide-adapters';
 
 describe('Routing och navigation (Seam 2: Vitest + jsdom)', () => {
   let fixture: ComponentFixture<App>;
   let router: Router;
 
   beforeEach(async () => {
+    localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
+      providers: [provideRouter(routes), provideAdapters()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(App);

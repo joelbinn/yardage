@@ -1,0 +1,78 @@
+<section class="page">
+  <h2>Inställningar</h2>
+
+  <section class="card" aria-labelledby="repo-heading">
+    <h3 id="repo-heading">Data-repo</h3>
+    <p class="hint">
+      Det publika GitHub-repo där dina banor lagras som <code>courses.json</code>. Banorna läses
+      utan inloggning.
+    </p>
+    <form [formGroup]="repoForm" (ngSubmit)="saveRepo()" class="form">
+      <label class="field">
+        <span>Ägare (GitHub-användare eller organisation)</span>
+        <input formControlName="owner" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      </label>
+      <label class="field">
+        <span>Reponamn</span>
+        <input formControlName="name" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      </label>
+      <button type="submit" class="btn btn-primary">Spara data-repo</button>
+    </form>
+    @if (repoMessage(); as msg) {
+      <p [attr.role]="msg.error ? 'alert' : 'status'" [class.error]="msg.error" class="message">
+        {{ msg.text }}
+      </p>
+    }
+  </section>
+
+  <section class="card" aria-labelledby="token-heading">
+    <h3 id="token-heading">GitHub-token</h3>
+
+    <div class="info">
+      <h4>Vad tokenen kan</h4>
+      <p>
+        Tokenen behövs bara i Redigeringsläget, för att spara <code>courses.json</code> i ditt
+        data-repo. Spelläget fungerar utan token.
+      </p>
+      <p>Skapa en <strong>fine-grained personal access token</strong> med minsta möjliga behörighet:</p>
+      <ul>
+        <li>Repository access: <strong>Only select repositories</strong> — välj endast data-repot.</li>
+        <li>Permissions: <strong>Contents: Read and write</strong> (<code>contents:write</code>). Inga andra behörigheter.</li>
+      </ul>
+      <p>
+        Tokenen sparas endast i den här webbläsarens localStorage och skickas bara till GitHub. Den
+        kan inte läsa eller ändra något annat än data-repot.
+      </p>
+
+      <h4>Så återkallar du den</h4>
+      <ol>
+        <li>Tryck på <strong>Radera token</strong> nedan för att ta bort den från den här webbläsaren.</li>
+        <li>
+          Återkalla den helt hos GitHub under
+          <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener noreferrer">
+            Settings → Developer settings → Fine-grained tokens</a>: välj tokenen och tryck <strong>Delete</strong>.
+        </li>
+      </ol>
+    </div>
+
+    @if (hasToken()) {
+      <p class="token-state" role="status">En token är sparad i den här webbläsaren.</p>
+      <button type="button" class="btn" (click)="clearToken()">Radera token</button>
+    }
+
+    <form [formGroup]="tokenForm" (ngSubmit)="saveToken()" class="form">
+      <label class="field">
+        <span>{{ hasToken() ? 'Ersätt token' : 'Token' }}</span>
+        <input formControlName="token" type="password" autocomplete="off" spellcheck="false" />
+      </label>
+      <button type="submit" class="btn btn-primary">Spara token</button>
+    </form>
+    @if (tokenMessage(); as msg) {
+      <p [attr.role]="msg.error ? 'alert' : 'status'" [class.error]="msg.error" class="message">
+        {{ msg.text }}
+      </p>
+    }
+  </section>
+
+  <a routerLink="/" class="back-link">Tillbaka till start</a>
+</section>
