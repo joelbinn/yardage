@@ -4,9 +4,9 @@
 
 **Blocked by:** 04 (Hålvyn med live Avstånd)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] App-shell och senaste ban-dokument cachas av service workern
-- [ ] Bansökning och hålvyn fungerar helt offline med cachad data (GPS live)
-- [ ] Cachen uppdateras när ny bandata hämtas med nätverk
-- [ ] Playwright-test: efter första laddning (produktionsbuild med service worker) fungerar bansökning och hålvy med nätverket avstängt (ADR-0004)
+- [x] App-shell och senaste ban-dokument cachas av service workern
+- [x] Bansökning och hålvyn fungerar helt offline med cachad data (GPS live)
+- [x] Cachen uppdateras när ny bandata hämtas med nätverk
+- [x] Playwright-test: efter första laddning (produktionsbuild med service worker) fungerar bansökning och hålvy med nätverket avstängt (ADR-0004)
