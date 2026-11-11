@@ -24,5 +24,17 @@
         "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "courses",
+      "urls": ["https://raw.githubusercontent.com/*/*/main/courses.json"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "timeout": "5s",
+        "maxAge": "365d",
+        "maxSize": 10
+      }
+    }
   ]
 }
