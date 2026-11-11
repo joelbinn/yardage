@@ -21,15 +21,15 @@ describe('distanceToGreen', () => {
 
 describe('holeNavigation', () => {
   it('should_disable_previous_when_on_first_hole', () => {
-    expect(holeNavigation(course, 0)).toEqual({ hole: course.holes[0], hasPrevious: false, hasNext: true });
+    expect(holeNavigation(course, 0)).toEqual({ index: 0, hole: course.holes[0], hasPrevious: false, hasNext: true });
   });
 
   it('should_disable_next_when_on_last_hole', () => {
-    expect(holeNavigation(course, 8)).toEqual({ hole: course.holes[8], hasPrevious: true, hasNext: false });
+    expect(holeNavigation(course, 8)).toEqual({ index: 8, hole: course.holes[8], hasPrevious: true, hasNext: false });
   });
 
   it('should_clamp_index_when_outside_course', () => {
-    expect(holeNavigation(course, 42).hole.number).toBe(9);
-    expect(holeNavigation(course, -1).hole.number).toBe(1);
+    expect(holeNavigation(course, 42)).toMatchObject({ index: 8, hole: { number: 9 } });
+    expect(holeNavigation(course, -1)).toMatchObject({ index: 0, hole: { number: 1 } });
   });
 });

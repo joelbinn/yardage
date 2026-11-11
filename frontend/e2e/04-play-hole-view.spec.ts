@@ -5,18 +5,17 @@ const RAW_URL = `https://raw.githubusercontent.com/${OWNER}/yardage-data/main/co
 
 // Nio hål på rad norrut; varje greenpunkt ligger 0,001° (≈ 111 m) norr om föregående.
 const BASE = { lat: 59.48, lng: 18.16 };
+const nineHoles = (id: string, name: string) => ({
+  id,
+  name,
+  holes: Array.from({ length: 9 }, (_, i) => ({
+    number: i + 1,
+    green: { lat: BASE.lat + i / 1000, lng: BASE.lng },
+  })),
+});
 const coursesDocument = {
   version: 1,
-  courses: [
-    {
-      id: 'ullna',
-      name: 'Ullna GK',
-      holes: Array.from({ length: 9 }, (_, i) => ({
-        number: i + 1,
-        green: { lat: BASE.lat + i / 1000, lng: BASE.lng },
-      })),
-    },
-  ],
+  courses: [nineHoles('ullna', 'Ullna GK'), nineHoles('lida', 'Lida GK')],
 };
 
 // Spelaren står 0,001° söder om green på hål 1 → 111 m; till hål 2 → 222 m.
@@ -94,6 +93,24 @@ test.describe('Ticket 04: Spelläge — hålvyn med live Avstånd', () => {
 
     await expect(distance(page)).toHaveText('111 m');
     expect(reads).toBe(1);
+  });
+
+  test('byte av bana i hålvyn börjar om på hål 1', async ({ page }) => {
+    await openHoleView(page);
+    await page.getByRole('link', { name: 'Stäng' }).click();
+    await page.getByRole('link', { name: /Lida GK/ }).click();
+    await expect(page.getByRole('heading', { name: 'Hål 1' })).toBeVisible();
+    await page.getByRole('link', { name: 'Stäng' }).click();
+    await page.getByRole('link', { name: /Ullna GK/ }).click();
+    await page.getByRole('button', { name: 'Nästa hål' }).click();
+    await page.getByRole('button', { name: 'Nästa hål' }).click();
+    await expect(page.getByRole('heading', { name: 'Hål 3' })).toBeVisible();
+
+    // Två steg bakåt i historiken (/play/ullna → /play/lida) återanvänder hålvyn med nytt :courseId.
+    await page.evaluate(() => history.go(-2));
+
+    await expect(page).toHaveURL(/\/play\/lida$/);
+    await expect(page.getByRole('heading', { name: 'Hål 1' })).toBeVisible();
   });
 
   test('stäng återgår till banvalet', async ({ page }) => {
