@@ -1,6 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { COURSE_READER, SETTINGS_STORE } from '../application/ports';
+import { COURSE_READER, PLAYER_POSITION_READER, SETTINGS_STORE } from '../application/ports';
+import { BrowserGeolocationPositionReader } from './browser-geolocation-position-reader';
 import { LocalStorageSettingsStore } from './local-storage-settings.store';
 import { RawGitHubCourseReader } from './raw-github-course-reader';
 
@@ -10,5 +11,6 @@ export function provideAdapters(): EnvironmentProviders {
     provideHttpClient(withFetch()),
     { provide: SETTINGS_STORE, useExisting: LocalStorageSettingsStore },
     { provide: COURSE_READER, useExisting: RawGitHubCourseReader },
+    { provide: PLAYER_POSITION_READER, useExisting: BrowserGeolocationPositionReader },
   ]);
 }

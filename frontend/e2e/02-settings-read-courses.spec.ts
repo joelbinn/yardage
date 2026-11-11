@@ -82,10 +82,9 @@ test.describe('Ticket 02: Inställningar + läs banor från data-repo', () => {
 
     const items = page.getByRole('list', { name: 'Banor' }).getByRole('listitem');
     await expect(items).toHaveCount(2);
-    await expect(items.nth(0)).toContainText('Ullna GK');
-    await expect(items.nth(0)).toContainText('18 hål');
-    await expect(items.nth(1)).toContainText('Kortbanan');
-    await expect(items.nth(1)).toContainText('9 hål');
+    // Ordningen styrs av bansökningen (ticket 03); här verifieras bara innehållet.
+    await expect(items.filter({ hasText: 'Ullna GK' })).toContainText('18 hål');
+    await expect(items.filter({ hasText: 'Kortbanan' })).toContainText('9 hål');
     expect(authHeader).toBeUndefined();
   });
 
