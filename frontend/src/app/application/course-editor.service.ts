@@ -11,7 +11,7 @@ import {
   placeGreenPoint,
   setHolePar,
 } from '../domain/course-draft';
-import { DataRepo } from '../domain/data-repo';
+import { DataRepo, dataRepoKey } from '../domain/data-repo';
 import { CourseCatalogService, CourseCatalogState } from './course-catalog.service';
 import { CourseWriteResult } from './ports';
 import { SettingsService } from './settings.service';
@@ -67,7 +67,7 @@ export class CourseEditorService {
    * så att ändringar i minnet överlever navigering mellan vyer.
    */
   async load(repo: DataRepo | null): Promise<void> {
-    const key = repo ? `${repo.owner}/${repo.name}` : null;
+    const key = repo ? dataRepoKey(repo) : null;
     if (key !== null && key === this.loadedRepoKey) {
       return;
     }

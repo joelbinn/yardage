@@ -1,11 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { Course } from '../domain/course';
-import { DataRepo } from '../domain/data-repo';
+import { DataRepo, dataRepoKey } from '../domain/data-repo';
 import { COURSE_READER, COURSE_WRITER, CourseReadResult, CourseWriteResult } from './ports';
 
 export type CourseCatalogState = CourseReadResult | { readonly kind: 'not-configured' };
-
-const repoKey = (repo: DataRepo): string => `${repo.owner}/${repo.name}`;
 
 /**
  * Application Service: läser och skriver data-repots ban-dokument.
@@ -25,14 +23,14 @@ export class CourseCatalogService {
     if (!repo) {
       return Promise.resolve({ kind: 'not-configured' });
     }
-    const saved = this.saved.get(repoKey(repo));
+    const saved = this.saved.get(dataRepoKey(repo));
     return saved ? Promise.resolve({ kind: 'loaded', courses: saved }) : this.reader.read(repo);
   }
 
   async save(repo: DataRepo, token: string, courses: readonly Course[]): Promise<CourseWriteResult> {
     const result = await this.writer.write(repo, token, courses);
     if (result.kind === 'saved') {
-      this.saved.set(repoKey(repo), courses);
+      this.saved.set(dataRepoKey(repo), courses);
     }
     return result;
   }

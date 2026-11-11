@@ -31,6 +31,11 @@ export function createDataRepo(rawOwner: string, rawName: string): DataRepoResul
   return { ok: true, value: Object.freeze({ owner, name }) };
 }
 
+/** Data-repots identitet som text, `owner/name` — nyckel för jämförelser och visning. */
+export function dataRepoKey(repo: DataRepo): string {
+  return `${repo.owner}/${repo.name}`;
+}
+
 /** Publik raw-URL till ban-dokumentet — läses utan autentisering. */
 export function rawCoursesUrl(repo: DataRepo): string {
   const owner = encodeURIComponent(repo.owner);

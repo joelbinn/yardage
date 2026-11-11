@@ -4,6 +4,7 @@ import { CourseCatalogService } from '../../application/course-catalog.service';
 import { PLAYER_POSITION_READER } from '../../application/ports';
 import { SettingsService } from '../../application/settings.service';
 import { searchCourses } from '../../domain/course-search';
+import { dataRepoKey } from '../../domain/data-repo';
 
 /**
  * Spelläget: bansökning. Banorna ur data-repot filtreras på namn och sorteras
@@ -88,6 +89,6 @@ export class PlayComponent {
   });
   readonly repoLabel = computed(() => {
     const repo = this.settings.dataRepo();
-    return repo ? `${repo.owner}/${repo.name}` : '';
+    return repo ? dataRepoKey(repo) : '';
   });
 }
