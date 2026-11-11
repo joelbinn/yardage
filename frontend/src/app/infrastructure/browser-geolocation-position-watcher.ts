@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IPlayerPositionWatcher } from '../application/ports';
 import { PositionFix } from '../domain/geo';
+import { browserGeolocation, toGeoPoint } from './browser-geolocation';
 
 const toFix = ({ coords }: GeolocationPosition): PositionFix =>
   Object.freeze({
-    position: Object.freeze({ lat: coords.latitude, lng: coords.longitude }),
+    position: toGeoPoint(coords),
     accuracyMeters: coords.accuracy,
   });
 
@@ -19,7 +20,7 @@ const toFix = ({ coords }: GeolocationPosition): PositionFix =>
 export class BrowserGeolocationPositionWatcher implements IPlayerPositionWatcher {
   watch(): Observable<PositionFix | null> {
     return new Observable((subscriber) => {
-      const geolocation = typeof navigator === 'undefined' ? undefined : navigator.geolocation;
+      const geolocation = browserGeolocation();
       if (!geolocation) {
         subscriber.next(null);
         return undefined;
