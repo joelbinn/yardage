@@ -8,6 +8,8 @@ export function distanceToGreen(position: GeoPoint, hole: Hole): number {
 
 /** Det aktiva hålet och om navigering bakåt/framåt är möjlig (ingen wrap). */
 export interface HoleNavigation {
+  /** Hålets index i banan, efter klämning. */
+  readonly index: number;
   readonly hole: Hole;
   readonly hasPrevious: boolean;
   readonly hasNext: boolean;
@@ -17,5 +19,10 @@ export interface HoleNavigation {
 export function holeNavigation(course: Course, index: number): HoleNavigation {
   const last = course.holes.length - 1;
   const clamped = Math.min(Math.max(index, 0), last);
-  return Object.freeze({ hole: course.holes[clamped], hasPrevious: clamped > 0, hasNext: clamped < last });
+  return Object.freeze({
+    index: clamped,
+    hole: course.holes[clamped],
+    hasPrevious: clamped > 0,
+    hasNext: clamped < last,
+  });
 }

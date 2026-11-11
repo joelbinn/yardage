@@ -30,8 +30,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.accuracy,
-.hint {
+/* Statusrader under Avståndet (noggrannhet, saknad platsåtkomst): mörkare än global .hint för solljus. */
+.status-line {
   margin: 0;
   font-size: 1rem;
   color: #374151;

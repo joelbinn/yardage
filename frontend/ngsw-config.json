@@ -31,7 +31,7 @@
       "urls": ["https://raw.githubusercontent.com/*/*/main/courses.json"],
       "cacheConfig": {
         "strategy": "freshness",
-        "timeout": "5s",
+        "timeout": "1s",
         "maxAge": "365d",
         "maxSize": 10
       }

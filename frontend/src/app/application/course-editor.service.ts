@@ -5,13 +5,12 @@ import {
   CourseDraftResult,
   coursesFromDrafts,
   createCourseDraft,
-  draftFromCourse,
   DraftHole,
   nextHoleNumber,
   placeGreenPoint,
   setHolePar,
 } from '../domain/course-draft';
-import { DataRepo } from '../domain/data-repo';
+import { DataRepo, dataRepoKey } from '../domain/data-repo';
 import { CourseCatalogService, CourseCatalogState } from './course-catalog.service';
 import { CourseWriteResult } from './ports';
 import { SettingsService } from './settings.service';
@@ -67,7 +66,7 @@ export class CourseEditorService {
    * så att ändringar i minnet överlever navigering mellan vyer.
    */
   async load(repo: DataRepo | null): Promise<void> {
-    const key = repo ? `${repo.owner}/${repo.name}` : null;
+    const key = repo ? dataRepoKey(repo) : null;
     if (key !== null && key === this.loadedRepoKey) {
       return;
     }
@@ -80,7 +79,7 @@ export class CourseEditorService {
     // Saknat ban-dokument = nytt data-repo: arbetskopian börjar tom och är redigerbar.
     this.loadedRepoKey = isEditable(state.kind) ? key : null;
     this.loadedRepo = isEditable(state.kind) ? repo : null;
-    this.coursesState.set(state.kind === 'loaded' ? state.courses.map(draftFromCourse) : []);
+    this.coursesState.set(state.kind === 'loaded' ? state.courses : []);
     this.selectedIdState.set(null);
     this.statusState.set(state.kind);
   }

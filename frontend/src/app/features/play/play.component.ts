@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CourseCatalogService } from '../../application/course-catalog.service';
+import { injectCourseCatalog } from '../../application/course-catalog.service';
 import { PLAYER_POSITION_READER } from '../../application/ports';
 import { SettingsService } from '../../application/settings.service';
 import { searchCourses } from '../../domain/course-search';
+import { dataRepoKey } from '../../domain/data-repo';
 
 /**
  * Spelläget: bansökning. Banorna ur data-repot filtreras på namn och sorteras
@@ -63,13 +64,9 @@ import { searchCourses } from '../../domain/course-search';
 })
 export class PlayComponent {
   private readonly settings = inject(SettingsService);
-  private readonly catalog = inject(CourseCatalogService);
   private readonly positionReader = inject(PLAYER_POSITION_READER);
 
-  private readonly catalogResource = resource({
-    params: () => this.settings.dataRepo(),
-    loader: ({ params }) => this.catalog.load(params),
-  });
+  private readonly catalogResource = injectCourseCatalog();
 
   // Positionen läses en gång; fram till dess visas banorna alfabetiskt.
   private readonly positionResource = resource({
@@ -88,6 +85,6 @@ export class PlayComponent {
   });
   readonly repoLabel = computed(() => {
     const repo = this.settings.dataRepo();
-    return repo ? `${repo.owner}/${repo.name}` : '';
+    return repo ? dataRepoKey(repo) : '';
   });
 }

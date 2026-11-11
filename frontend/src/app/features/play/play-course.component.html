@@ -14,11 +14,11 @@
     </output>
 
     @if (fix() === null) {
-      <p class="hint" role="alert">Platsåtkomst saknas — Avståndet kan inte beräknas.</p>
+      <p class="hint status-line" role="alert">Platsåtkomst saknas — Avståndet kan inte beräknas.</p>
     } @else if (accuracy() !== undefined) {
-      <p class="accuracy">±{{ accuracy() }} m</p>
+      <p class="status-line">±{{ accuracy() }} m</p>
     } @else {
-      <p class="accuracy">Väntar på GPS…</p>
+      <p class="status-line">Väntar på GPS…</p>
     }
 
     <div class="hole-nav">

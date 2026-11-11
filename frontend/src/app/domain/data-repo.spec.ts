@@ -1,4 +1,4 @@
-import { createDataRepo, DEFAULT_DATA_REPO_NAME, rawCoursesUrl } from './data-repo';
+import { createDataRepo, dataRepoKey, DEFAULT_DATA_REPO_NAME, rawCoursesUrl } from './data-repo';
 
 describe('createDataRepo', () => {
   it('should_create_data_repo_when_owner_and_name_are_valid', () => {
@@ -44,5 +44,11 @@ describe('rawCoursesUrl', () => {
     expect(rawCoursesUrl({ owner: 'joel', name: 'yardage-data' })).toBe(
       'https://raw.githubusercontent.com/joel/yardage-data/main/courses.json',
     );
+  });
+});
+
+describe('dataRepoKey', () => {
+  it('should_return_owner_slash_name_when_given_a_data_repo', () => {
+    expect(dataRepoKey({ owner: 'joel', name: 'yardage-data' })).toBe('joel/yardage-data');
   });
 });

@@ -1,6 +1,6 @@
 # Offline-bandata via ngsw dataGroup (freshness)
 
-Spelaren ska kunna slå upp Avstånd utan mobiltäckning (ticket 08). Vi beslöt att cacha ban-dokumentet (`courses.json` från `raw.githubusercontent.com`) med en `dataGroup` i `frontend/ngsw-config.json` med strategin `freshness`: nätverket först (timeout 5 s), annars senast cachade svar. App-shell cachas redan av assetGroup `app` (prefetch).
+Spelaren ska kunna slå upp Avstånd utan mobiltäckning (ticket 08). Vi beslöt att cacha ban-dokumentet (`courses.json` från `raw.githubusercontent.com`) med en `dataGroup` i `frontend/ngsw-config.json` med strategin `freshness`: nätverket först (timeout 1 s), annars senast cachade svar. Timeouten är kort för specens mål "Avstånd till green på < 2 sekunder … även vid dålig mobiltäckning": med långsamt nät visas cachad bandata efter 1 s i stället för att vänta ut nätet (en längre timeout, t.ex. 5 s, skulle ensam spräcka målet). Hålvyn och bansökningen delar dessutom en inläsning per session (`CourseCatalogService`), så att öppna en bana inte kostar en ny hämtning. App-shell cachas redan av assetGroup `app` (prefetch).
 
 ## Considered Options
 

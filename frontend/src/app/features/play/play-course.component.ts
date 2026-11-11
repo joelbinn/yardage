@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
-import { CourseCatalogService } from '../../application/course-catalog.service';
+import { injectCourseCatalog } from '../../application/course-catalog.service';
 import { PLAYER_POSITION_WATCHER } from '../../application/ports';
-import { SettingsService } from '../../application/settings.service';
 import { distanceToGreen, holeNavigation } from '../../domain/hole-play';
 
 /**
@@ -20,19 +19,16 @@ import { distanceToGreen, holeNavigation } from '../../domain/hole-play';
   styleUrl: './play-course.component.css',
 })
 export class PlayCourseComponent {
-  private readonly settings = inject(SettingsService);
-  private readonly catalog = inject(CourseCatalogService);
   private readonly courseId = toSignal(inject(ActivatedRoute).paramMap.pipe(map((p) => p.get('courseId'))));
 
-  protected readonly catalogResource = resource({
-    params: () => this.settings.dataRepo(),
-    loader: ({ params }) => this.catalog.load(params),
-  });
+  // Delar inläsningen med bansökningen: hålvyn öppnas utan ny nätverksläsning.
+  protected readonly catalogResource = injectCourseCatalog();
 
   // undefined = väntar på första avläsningen, null = platsåtkomst saknas.
   protected readonly fix = toSignal(inject(PLAYER_POSITION_WATCHER).watch(), { initialValue: undefined });
 
-  private readonly holeIndex = signal(0);
+  // Börjar om på första hålet när :courseId byts (komponenten återanvänds av routern).
+  private readonly holeIndex = linkedSignal({ source: this.courseId, computation: () => 0 });
 
   readonly course = computed(() => {
     const s = this.catalogResource.value();
@@ -55,12 +51,19 @@ export class PlayCourseComponent {
     return fix ? Math.round(fix.accuracyMeters) : undefined;
   });
 
+  // Domänens holeNavigation klämmer indexet; stegen utgår från det klämda hålet.
   previous(): void {
-    this.holeIndex.update((i) => Math.max(i - 1, 0));
+    this.step(-1);
   }
 
   next(): void {
-    const last = (this.course()?.holes.length ?? 1) - 1;
-    this.holeIndex.update((i) => Math.min(i + 1, last));
+    this.step(1);
+  }
+
+  private step(delta: number): void {
+    const nav = this.navigation();
+    if (nav) {
+      this.holeIndex.set(nav.index + delta);
+    }
   }
 }
