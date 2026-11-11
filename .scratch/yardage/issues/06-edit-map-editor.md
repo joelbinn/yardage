@@ -4,11 +4,11 @@
 
 **Blocked by:** 05 (Bankurslista + skapa Bana)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Satellitkarta (Leaflet + Esri World Imagery) med attributering visas
-- [ ] Sidopanel med hållista; ett hål är aktivt åt gången
-- [ ] Klick på kartan sätter greenpunkten för det aktiva hålet
-- [ ] Befintliga greenpunkter är dragbara markörer
-- [ ] Par kan anges valfritt per hål
-- [ ] Playwright-test: klick på kartan sätter greenpunkt för aktivt hål och markör kan dras (Esri-tiles mockade) (ADR-0004)
+- [x] Satellitkarta (Leaflet + Esri World Imagery) med attributering visas
+- [x] Sidopanel med hållista; ett hål är aktivt åt gången
+- [x] Klick på kartan sätter greenpunkten för det aktiva hålet
+- [x] Befintliga greenpunkter är dragbara markörer
+- [x] Par kan anges valfritt per hål
+- [x] Playwright-test: klick på kartan sätter greenpunkt för aktivt hål och markör kan dras (Esri-tiles mockade) (ADR-0004)

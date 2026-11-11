@@ -1,6 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import {
+  COURSE_MAP_FACTORY,
   COURSE_READER,
   PLAYER_POSITION_READER,
   PLAYER_POSITION_WATCHER,
@@ -8,6 +9,7 @@ import {
 } from '../application/ports';
 import { BrowserGeolocationPositionReader } from './browser-geolocation-position-reader';
 import { BrowserGeolocationPositionWatcher } from './browser-geolocation-position-watcher';
+import { LeafletCourseMapFactory } from './leaflet-course-map';
 import { LocalStorageSettingsStore } from './local-storage-settings.store';
 import { RawGitHubCourseReader } from './raw-github-course-reader';
 
@@ -19,5 +21,6 @@ export function provideAdapters(): EnvironmentProviders {
     { provide: COURSE_READER, useExisting: RawGitHubCourseReader },
     { provide: PLAYER_POSITION_READER, useExisting: BrowserGeolocationPositionReader },
     { provide: PLAYER_POSITION_WATCHER, useExisting: BrowserGeolocationPositionWatcher },
+    { provide: COURSE_MAP_FACTORY, useExisting: LeafletCourseMapFactory },
   ]);
 }

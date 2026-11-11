@@ -50,6 +50,55 @@ export function createCourseDraft(
   return { ok: true, value: Object.freeze(draft) };
 }
 
+/** Sätter (eller flyttar) greenpunkten för ett Hål. Okänt hålnummer lämnar banan orörd. */
+export function placeGreenPoint(
+  draft: CourseDraft,
+  holeNumber: number,
+  green: GreenPoint,
+): CourseDraft {
+  return updateHole(draft, holeNumber, (hole) => ({
+    ...hole,
+    green: Object.freeze({ lat: green.lat, lng: green.lng }),
+  }));
+}
+
+/** Sätter par för ett Hål; `null` tar bort par (fältet är valfritt). */
+export function setHolePar(
+  draft: CourseDraft,
+  holeNumber: number,
+  par: number | null,
+): CourseDraftResult {
+  if (par === null) {
+    return { ok: true, value: updateHole(draft, holeNumber, withoutPar) };
+  }
+  if (!Number.isInteger(par) || par < 1) {
+    return { ok: false, error: 'Par måste vara ett positivt heltal.' };
+  }
+  return { ok: true, value: updateHole(draft, holeNumber, (hole) => ({ ...hole, par })) };
+}
+
+/** Hålet efter `holeNumber` i spelordning; sista hålet förblir sist. */
+export function nextHoleNumber(draft: CourseDraft, holeNumber: number): number {
+  return draft.holes.some((h) => h.number === holeNumber + 1) ? holeNumber + 1 : holeNumber;
+}
+
+function withoutPar(hole: DraftHole): DraftHole {
+  return { number: hole.number, green: hole.green };
+}
+
+/** Ersätter ett hål med en ny, fryst instans; övriga hål delas oförändrade. */
+function updateHole(
+  draft: CourseDraft,
+  holeNumber: number,
+  change: (hole: DraftHole) => DraftHole,
+): CourseDraft {
+  if (!draft.holes.some((h) => h.number === holeNumber)) {
+    return draft;
+  }
+  const holes = draft.holes.map((h) => (h.number === holeNumber ? Object.freeze(change(h)) : h));
+  return Object.freeze({ ...draft, holes: Object.freeze(holes) });
+}
+
 const FALLBACK_ID = 'bana';
 
 /** Gör om ett namn till ett URL-säkert id: gemener, a–z/0–9, bindestreck mellan ord. */

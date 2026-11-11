@@ -1,4 +1,4 @@
-import { createCourseDraft } from './course-draft';
+import { createCourseDraft, placeGreenPoint, setHolePar } from './course-draft';
 
 describe('createCourseDraft', () => {
   it('should_create_course_with_holes_numbered_from_1_when_input_is_valid', () => {
@@ -59,5 +59,64 @@ describe('createCourseDraft', () => {
     expect(result.ok && Object.isFrozen(result.value)).toBe(true);
     expect(result.ok && Object.isFrozen(result.value.holes)).toBe(true);
     expect(result.ok && Object.isFrozen(result.value.holes[0])).toBe(true);
+  });
+});
+
+const nineHoles = () => {
+  const result = createCourseDraft('Kortbanan', 9, []);
+  if (!result.ok) throw new Error(result.error);
+  return result.value;
+};
+
+describe('placeGreenPoint', () => {
+  it('should_set_green_point_of_given_hole_only_when_hole_exists', () => {
+    const draft = nineHoles();
+
+    const updated = placeGreenPoint(draft, 3, { lat: 59.4, lng: 18.1 });
+
+    expect(updated.holes[2].green).toEqual({ lat: 59.4, lng: 18.1 });
+    expect(updated.holes.filter((h) => h.green !== null)).toHaveLength(1);
+    expect(draft.holes[2].green).toBeNull();
+    expect(Object.isFrozen(updated)).toBe(true);
+    expect(Object.isFrozen(updated.holes[2])).toBe(true);
+  });
+
+  it('should_keep_par_when_green_point_is_moved', () => {
+    const withPar = setHolePar(nineHoles(), 1, 4);
+    if (!withPar.ok) throw new Error(withPar.error);
+
+    const updated = placeGreenPoint(withPar.value, 1, { lat: 1, lng: 2 });
+
+    expect(updated.holes[0]).toEqual({ number: 1, green: { lat: 1, lng: 2 }, par: 4 });
+  });
+
+  it('should_return_same_draft_when_hole_does_not_exist', () => {
+    const draft = nineHoles();
+
+    expect(placeGreenPoint(draft, 10, { lat: 1, lng: 2 })).toBe(draft);
+  });
+});
+
+describe('setHolePar', () => {
+  it('should_set_par_of_given_hole_when_par_is_positive_integer', () => {
+    const result = setHolePar(nineHoles(), 2, 5);
+
+    expect(result.ok && result.value.holes[1]).toEqual({ number: 2, green: null, par: 5 });
+  });
+
+  it('should_clear_par_when_par_is_null', () => {
+    const withPar = setHolePar(nineHoles(), 2, 5);
+    if (!withPar.ok) throw new Error(withPar.error);
+
+    const result = setHolePar(withPar.value, 2, null);
+
+    expect(result.ok && result.value.holes[1]).toEqual({ number: 2, green: null });
+  });
+
+  it.each([0, -3, 3.5, Number.NaN])('should_reject_par_%s', (par) => {
+    expect(setHolePar(nineHoles(), 2, par)).toEqual({
+      ok: false,
+      error: 'Par måste vara ett positivt heltal.',
+    });
   });
 });

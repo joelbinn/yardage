@@ -64,19 +64,68 @@
           }
         </section>
       </div>
+    </div>
 
-      @if (selected(); as course) {
-        <section class="card" aria-label="Vald bana">
+    @if (selected(); as course) {
+      <section class="card map-editor" aria-label="Vald bana">
+        <div class="map-editor-panel">
           <h3>{{ course.name }}</h3>
-          <p class="hint">Greenpunkter sätts i karteditorn.</p>
+          <p class="hint">Klicka på kartan för att sätta greenpunkten för aktivt hål.</p>
           <ol class="hole-list">
             @for (hole of course.holes; track hole.number) {
-              <li>Hål {{ hole.number }}{{ hole.green ? '' : ' — greenpunkt saknas' }}</li>
+              <li>
+                <button
+                  type="button"
+                  class="hole-button"
+                  [class.active]="hole.number === activeHole()?.number"
+                  [attr.aria-current]="hole.number === activeHole()?.number ? 'true' : null"
+                  (click)="activateHole(hole.number)"
+                >
+                  Hål {{ hole.number }}{{ hole.par ? ' · par ' + hole.par : '' }}{{
+                    hole.green ? '' : ' — greenpunkt saknas'
+                  }}
+                </button>
+              </li>
             }
           </ol>
-        </section>
-      }
-    </div>
+
+          @if (activeHole(); as hole) {
+            <section class="active-hole" aria-label="Aktivt hål">
+              <h4>Hål {{ hole.number }}</h4>
+              <p data-testid="green-point">
+                @if (hole.green; as green) {
+                  Greenpunkt: {{ green.lat.toFixed(5) }}, {{ green.lng.toFixed(5) }}
+                } @else {
+                  Greenpunkt saknas.
+                }
+              </p>
+              <label class="field">
+                <span>Par</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="valfritt"
+                  [value]="hole.par ?? ''"
+                  (change)="setPar(hole.number, $any($event.target).value)"
+                />
+              </label>
+              @if (parError(); as error) {
+                <p role="alert" class="message error">{{ error }}</p>
+              }
+            </section>
+          }
+        </div>
+        <app-course-map
+          class="map-editor-map"
+          [course]="course"
+          [activeHoleNumber]="activeHole()?.number ?? null"
+          (mapClicked)="placeGreenPoint($event)"
+          (greenPointMoved)="moveGreenPoint($event)"
+        />
+      </section>
+    }
   } @else {
     @switch (status()) {
       @case ('not-configured') {

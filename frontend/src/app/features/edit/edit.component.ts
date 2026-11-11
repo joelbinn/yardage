@@ -3,12 +3,13 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CourseEditorService } from '../../application/course-editor.service';
 import { SettingsService } from '../../application/settings.service';
-import { ALLOWED_HOLE_COUNTS } from '../../domain/course';
+import { ALLOWED_HOLE_COUNTS, GreenPoint } from '../../domain/course';
+import { CourseMapComponent, MovedGreenPoint } from './course-map.component';
 
-/** Redigeringsläget: lista banor, skapa, ta bort och välj Bana för redigering. */
+/** Redigeringsläget: banlista (skapa, ta bort, välj) och karteditor för vald Bana. */
 @Component({
   selector: 'app-edit',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, CourseMapComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.css',
@@ -23,7 +24,9 @@ export class EditComponent {
   readonly canEdit = this.editor.canEdit;
   readonly courses = this.editor.courses;
   readonly selected = this.editor.selected;
+  readonly activeHole = this.editor.activeHole;
   readonly createError = signal<string | null>(null);
+  readonly parError = signal<string | null>(null);
 
   readonly createForm = this.fb.group({ name: '', holeCount: 18 });
 
@@ -48,5 +51,27 @@ export class EditComponent {
 
   select(id: string): void {
     this.editor.select(id);
+    this.parError.set(null);
+  }
+
+  activateHole(holeNumber: number): void {
+    this.editor.activateHole(holeNumber);
+    this.parError.set(null);
+  }
+
+  placeGreenPoint(green: GreenPoint): void {
+    this.editor.placeGreenPointForActiveHole(green);
+    this.parError.set(null);
+  }
+
+  moveGreenPoint({ holeNumber, green }: MovedGreenPoint): void {
+    this.editor.moveGreenPoint(holeNumber, green);
+  }
+
+  /** Tomt fält tar bort par; annars tolkas värdet som tal och valideras i domänen. */
+  setPar(holeNumber: number, value: string): void {
+    const par = value.trim() === '' ? null : Number(value);
+    const result = this.editor.setPar(holeNumber, par);
+    this.parError.set(result.ok ? null : result.error);
   }
 }
