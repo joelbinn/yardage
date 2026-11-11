@@ -42,3 +42,6 @@ Thumbs.db
 
 # Skisser och temp notes
 slask/
+
+# Upphäv global ~/.gitignore-regel "play" som annars döljer features/play/
+!play/
