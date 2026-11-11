@@ -102,10 +102,15 @@ describe('parseCoursesDocument', () => {
     expectInvalid(document([course({ holes: swapped })]), 'courses[0].holes[0].number');
   });
 
-  it('should_reject_hole_without_green', () => {
-    const broken = holes(9).map((h, i) => (i === 2 ? { number: 3 } : h));
+  it.each([
+    ['null', { number: 3, green: null }],
+    ['saknat fält', { number: 3 }],
+  ])('should_read_green_as_null_when_hole_lacks_green_point (%s)', (_label, hole) => {
+    const partial = holes(9).map((h, i) => (i === 2 ? hole : h));
 
-    expectInvalid(document([course({ holes: broken })]), 'courses[0].holes[2].green');
+    const result = parseCoursesDocument(document([course({ holes: partial })]));
+
+    expect(result.ok && result.courses[0].holes[2]).toEqual({ number: 3, green: null });
   });
 
   it.each([

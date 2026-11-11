@@ -14,6 +14,10 @@ describe('distanceToGreen', () => {
     expect(distanceToGreen({ lat: 58.999, lng: 18 }, hole)).toBe(111);
   });
 
+  it('should_return_null_when_hole_lacks_green_point', () => {
+    expect(distanceToGreen({ lat: 59, lng: 18 }, { number: 1, green: null })).toBeNull();
+  });
+
   it('should_return_zero_when_player_stands_on_green_point', () => {
     expect(distanceToGreen({ lat: 59, lng: 18 }, course.holes[0])).toBe(0);
   });

@@ -10,10 +10,13 @@ export interface GreenPoint {
   readonly lng: number;
 }
 
-/** Ett av en banas hål, identifierat av hålnummer och knutet till exakt en greenpunkt. */
+/**
+ * Ett av en banas hål, identifierat av hålnummer. Greenpunkten kan saknas (`null`)
+ * för en bana som ännu inte är färdigregistrerad; Spelläget visar då "Greenpunkt saknas".
+ */
 export interface Hole {
   readonly number: number;
-  readonly green: GreenPoint;
+  readonly green: GreenPoint | null;
   readonly par?: number;
 }
 

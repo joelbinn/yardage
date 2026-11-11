@@ -84,7 +84,7 @@ test.describe('Ticket 07: Redigeringsläge — spara via Git Data API', () => {
     await expect(saveSection(page).getByRole('link', { name: 'Gå till Inställningar' })).toBeVisible();
   });
 
-  test('bana med hål utan greenpunkt sparas inte', async ({ page }) => {
+  test('bana med hål utan greenpunkt sparas med green null', async ({ page }) => {
     const requests = await stubGitDataApi(page);
     await openEditModeWithTwoCourses(page, TEST_TOKEN);
 
@@ -93,10 +93,11 @@ test.describe('Ticket 07: Redigeringsläge — spara via Git Data API', () => {
     await page.getByRole('button', { name: 'Skapa bana' }).click();
     await saveSection(page).getByRole('button', { name: 'Spara banor' }).click();
 
-    await expect(saveSection(page).getByRole('alert')).toHaveText(
-      'Kortbanan saknar greenpunkt för hål 1, 2, 3, 4, 5, 6, 7, 8, 9.',
-    );
-    expect(requests).toEqual([]);
+    await expect(saveSection(page).getByRole('status')).toHaveText('Banorna är sparade i data-repot.');
+    const blob = requests.find((r) => r.url === `${GIT_API}/blobs`)!.body;
+    const saved = JSON.parse(blob['content'] as string);
+    const kortbanan = saved.courses.find((c: { id: string }) => c.id === 'kortbanan');
+    expect(kortbanan.holes[0]).toEqual({ number: 1, green: null });
   });
 
   test('första sparningen till ett helt tomt data-repo skapar en commit via Contents API', async ({

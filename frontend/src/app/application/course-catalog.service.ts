@@ -46,6 +46,17 @@ export class CourseCatalogService {
     return pending;
   }
 
+  /**
+   * Läser om data-repot från nätverket (Spellägets synk-knapp). Släpper sessionens
+   * inläsning, även de sparade banorna, så att ändringar från andra enheter syns.
+   */
+  refresh(repo: DataRepo | null): Promise<CourseCatalogState> {
+    if (repo) {
+      this.loads.delete(dataRepoKey(repo));
+    }
+    return this.load(repo);
+  }
+
   async save(repo: DataRepo, token: string, courses: readonly Course[]): Promise<CourseWriteResult> {
     const result = await this.writer.write(repo, token, courses);
     if (result.kind === 'saved') {

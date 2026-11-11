@@ -81,7 +81,7 @@ interface Course {
 
 interface Hole {
   number: number;      // 1..N
-  green: { lat: number; lng: number };  // greenpunkten
+  green: { lat: number; lng: number } | null;  // greenpunkten; null = ej registrerad än
   par?: number;        // valfritt, visas ej i spelläget
 }
 ```

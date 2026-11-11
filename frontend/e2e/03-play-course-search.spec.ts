@@ -73,4 +73,22 @@ test.describe('Ticket 03: Spelläge — bansökning närmast-först', () => {
       await expect(page.getByText('Platsåtkomst saknas — banorna visas i bokstavsordning.')).toBeVisible();
     });
   });
+
+  test('synk-knappen läser om ban-dokumentet från data-repot', async ({ page }) => {
+    let document = coursesDocument;
+    await page.route(RAW_URL, (route) =>
+      route.fulfill({ status: 200, contentType: 'text/plain', body: JSON.stringify(document) }),
+    );
+    await page.goto('/');
+    await page.evaluate((owner) => {
+      localStorage.setItem('yardage.dataRepo', JSON.stringify({ owner, name: 'yardage-data' }));
+    }, OWNER);
+    await page.goto('/play');
+    await expect(courseItems(page)).toHaveCount(3);
+
+    document = { version: 1, courses: [{ id: 'lida', name: 'Lida GK', holes: greens(59.3, 17.9, 9) }] };
+    await page.getByRole('button', { name: 'Synka banor' }).click();
+
+    await expect(courseItems(page)).toHaveText([/Lida GK/]);
+  });
 });

@@ -113,6 +113,29 @@ test.describe('Ticket 04: Spelläge — hålvyn med live Avstånd', () => {
     await expect(page.getByRole('heading', { name: 'Hål 1' })).toBeVisible();
   });
 
+  test('hål utan greenpunkt visar Greenpunkt saknas', async ({ page }) => {
+    const partial = nineHoles('ullna', 'Ullna GK');
+    const holes = partial.holes.map((h) => (h.number === 2 ? { number: 2, green: null } : h));
+    await page.route(RAW_URL, (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'text/plain',
+        body: JSON.stringify({ version: 1, courses: [{ ...partial, holes }] }),
+      }),
+    );
+    await page.goto('/');
+    await page.evaluate((owner) => {
+      localStorage.setItem('yardage.dataRepo', JSON.stringify({ owner, name: 'yardage-data' }));
+    }, OWNER);
+    await page.goto('/play/ullna');
+    await expect(distance(page)).toHaveText('111 m');
+
+    await page.getByRole('button', { name: 'Nästa hål' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Hål 2' })).toBeVisible();
+    await expect(distance(page)).toHaveText('Greenpunkt saknas');
+  });
+
   test('stäng återgår till banvalet', async ({ page }) => {
     await openHoleView(page);
 

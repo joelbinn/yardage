@@ -1,9 +1,12 @@
 import { Course, GreenPoint } from './course';
 import { GeoPoint, haversineMeters } from './geo';
 
-/** Banans centroid: medelvärdet av banans greenpunkter. */
-export function courseCentroid(course: Course): GeoPoint {
-  const greens: readonly GreenPoint[] = course.holes.map((h) => h.green);
+/** Banans centroid: medelvärdet av banans registrerade greenpunkter; `null` om inga finns. */
+export function courseCentroid(course: Course): GeoPoint | null {
+  const greens = course.holes.map((h) => h.green).filter((g): g is GreenPoint => g !== null);
+  if (greens.length === 0) {
+    return null;
+  }
   const sum = greens.reduce((acc, g) => ({ lat: acc.lat + g.lat, lng: acc.lng + g.lng }), { lat: 0, lng: 0 });
   return Object.freeze({ lat: sum.lat / greens.length, lng: sum.lng / greens.length });
 }
@@ -18,9 +21,15 @@ const matchesQuery =
 const sortAlphabetically = (courses: readonly Course[]): readonly Course[] =>
   [...courses].sort((a, b) => swedishCollator.compare(a.name, b.name));
 
+// Banor utan greenpunkter har ingen position och hamnar sist.
+const distanceToCourse = (position: GeoPoint, course: Course): number => {
+  const centroid = courseCentroid(course);
+  return centroid ? haversineMeters(position, centroid) : Number.POSITIVE_INFINITY;
+};
+
 const sortNearestFirst = (courses: readonly Course[], position: GeoPoint): readonly Course[] =>
   courses
-    .map((course) => ({ course, distance: haversineMeters(position, courseCentroid(course)) }))
+    .map((course) => ({ course, distance: distanceToCourse(position, course) }))
     .sort((a, b) => a.distance - b.distance)
     .map((x) => x.course);
 

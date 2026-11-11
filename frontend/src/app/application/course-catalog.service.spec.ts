@@ -78,4 +78,19 @@ describe('CourseCatalogService', () => {
     expect(await catalog.load(REPO)).toEqual({ kind: 'loaded', courses: [course('kortbanan')] });
     expect(reader.reads).toHaveLength(1);
   });
+
+  it('should_read_data_repo_again_when_refreshed', async () => {
+    await catalog.load(REPO);
+    reader.result = { kind: 'loaded', courses: [course('lida')] };
+
+    expect(await catalog.refresh(REPO)).toEqual({ kind: 'loaded', courses: [course('lida')] });
+    expect(await catalog.load(REPO)).toEqual({ kind: 'loaded', courses: [course('lida')] });
+    expect(reader.reads).toHaveLength(2);
+  });
+
+  it('should_drop_saved_override_when_refreshed', async () => {
+    await catalog.save(REPO, 'token', [course('kortbanan')]);
+
+    expect(await catalog.refresh(REPO)).toEqual({ kind: 'loaded', courses: [course('ullna')] });
+  });
 });

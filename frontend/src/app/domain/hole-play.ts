@@ -1,9 +1,9 @@
 import { Course, Hole } from './course';
 import { GeoPoint, haversineMeters } from './geo';
 
-/** Avståndet i hela meter från spelarens position till hålets greenpunkt. */
-export function distanceToGreen(position: GeoPoint, hole: Hole): number {
-  return Math.round(haversineMeters(position, hole.green));
+/** Avståndet i hela meter från spelarens position till hålets greenpunkt; `null` om den saknas. */
+export function distanceToGreen(position: GeoPoint, hole: Hole): number | null {
+  return hole.green ? Math.round(haversineMeters(position, hole.green)) : null;
 }
 
 /** Det aktiva hålet och om navigering bakåt/framåt är möjlig (ingen wrap). */

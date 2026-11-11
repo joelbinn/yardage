@@ -76,9 +76,14 @@ function readHole(input: unknown, expectedNumber: number, path: string): Hole {
   if (obj['number'] !== expectedNumber) {
     throw new InvalidField(`${path}.number`, `måste vara ${expectedNumber}`);
   }
-  const green = readGreenPoint(obj['green'], `${path}.green`);
+  const green = readOptionalGreenPoint(obj['green'], `${path}.green`);
   const par = readOptionalPar(obj['par'], `${path}.par`);
   return par === undefined ? { number: expectedNumber, green } : { number: expectedNumber, green, par };
+}
+
+/** Saknad eller `null` greenpunkt tolkas som "ej registrerad än". */
+function readOptionalGreenPoint(input: unknown, path: string): GreenPoint | null {
+  return input === undefined || input === null ? null : readGreenPoint(input, path);
 }
 
 function readGreenPoint(input: unknown, path: string): GreenPoint {

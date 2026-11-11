@@ -17,8 +17,29 @@ describe('courseCentroid', () => {
 
     const centroid = courseCentroid(c);
 
-    expect(centroid.lat).toBeCloseTo(59.2, 10);
-    expect(centroid.lng).toBeCloseTo(18.2, 10);
+    expect(centroid?.lat).toBeCloseTo(59.2, 10);
+    expect(centroid?.lng).toBeCloseTo(18.2, 10);
+  });
+
+  it('should_ignore_holes_without_green_point_when_computing_centroid', () => {
+    const c: Course = {
+      id: 'a',
+      name: 'A',
+      holes: [
+        { number: 1, green: { lat: 59.0, lng: 18.0 } },
+        { number: 2, green: null },
+        { number: 3, green: { lat: 59.2, lng: 18.4 } },
+      ],
+    };
+
+    expect(courseCentroid(c)?.lat).toBeCloseTo(59.1, 10);
+    expect(courseCentroid(c)?.lng).toBeCloseTo(18.2, 10);
+  });
+
+  it('should_return_null_when_course_has_no_green_points', () => {
+    const c: Course = { id: 'a', name: 'A', holes: [{ number: 1, green: null }] };
+
+    expect(courseCentroid(c)).toBeNull();
   });
 });
 
@@ -32,6 +53,14 @@ describe('searchCourses', () => {
     [59.49, 18.17],
   ]);
   const courses = [goteborg, uppsala, ullna];
+
+  it('should_sort_courses_without_green_points_last_when_position_is_known', () => {
+    const unmapped: Course = { id: 'ny', name: 'Aaa GK', holes: [{ number: 1, green: null }] };
+
+    const result = searchCourses([unmapped, ...courses], '', stockholm);
+
+    expect(result.map((c) => c.id)).toEqual(['ullna', 'upp', 'gbg', 'ny']);
+  });
 
   it('should_sort_nearest_first_when_position_is_known', () => {
     const result = searchCourses(courses, '', stockholm);

@@ -26,7 +26,6 @@ function saveFeedback(result: CourseSaveResult): SaveFeedback {
     case 'no-token':
     case 'unauthorized':
       return { text: TOKEN_GUIDANCE[result.kind], error: true, toSettings: true };
-    case 'incomplete':
     case 'failed':
       return { text: result.error, error: true, toSettings: false };
     case 'not-editable':

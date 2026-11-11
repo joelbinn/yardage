@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { injectCourseCatalog } from '../../application/course-catalog.service';
+import { CourseCatalogService, injectCourseCatalog } from '../../application/course-catalog.service';
 import { PLAYER_POSITION_READER } from '../../application/ports';
 import { SettingsService } from '../../application/settings.service';
 import { searchCourses } from '../../domain/course-search';
@@ -58,6 +58,11 @@ import { dataRepoKey } from '../../domain/data-repo';
           <p>Hämtar banor…</p>
         }
       }
+      @if (repoLabel()) {
+        <button type="button" class="btn btn-subtle" (click)="sync()" [disabled]="catalogResource.isLoading()">
+          Synka banor
+        </button>
+      }
       <a routerLink="/" class="back-link">Tillbaka till start</a>
     </section>
   `,
@@ -66,7 +71,8 @@ export class PlayComponent {
   private readonly settings = inject(SettingsService);
   private readonly positionReader = inject(PLAYER_POSITION_READER);
 
-  private readonly catalogResource = injectCourseCatalog();
+  private readonly catalog = inject(CourseCatalogService);
+  protected readonly catalogResource = injectCourseCatalog();
 
   // Positionen läses en gång; fram till dess visas banorna alfabetiskt.
   private readonly positionResource = resource({
@@ -87,4 +93,10 @@ export class PlayComponent {
     const repo = this.settings.dataRepo();
     return repo ? dataRepoKey(repo) : '';
   });
+
+  /** Läser om ban-dokumentet från data-repot (sessionen läser annars bara en gång). */
+  async sync(): Promise<void> {
+    await this.catalog.refresh(this.settings.dataRepo());
+    this.catalogResource.reload();
+  }
 }

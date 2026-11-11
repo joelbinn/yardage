@@ -312,16 +312,14 @@ describe('CourseEditorService', () => {
       expect(writer.writes).toHaveLength(0);
     });
 
-    it('should_refuse_to_save_when_a_hole_lacks_green_point', async () => {
+    it('should_save_course_when_a_hole_lacks_green_point', async () => {
       const { editor, writer } = setup();
       await editor.load(REPO);
       editor.create('Kortbanan', 9);
 
-      expect(await editor.save()).toEqual({
-        kind: 'incomplete',
-        error: 'Kortbanan saknar greenpunkt för hål 1, 2, 3, 4, 5, 6, 7, 8, 9.',
-      });
-      expect(writer.writes).toHaveLength(0);
+      expect(await editor.save()).toEqual({ kind: 'saved' });
+      const saved = writer.writes[0].courses.find((c) => c.id === 'kortbanan');
+      expect(saved?.holes[0]).toEqual({ number: 1, green: null });
     });
 
     it('should_pass_on_unauthorized_when_github_rejects_token', async () => {

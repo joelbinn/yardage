@@ -3,7 +3,6 @@ import { GreenPoint } from '../domain/course';
 import {
   CourseDraft,
   CourseDraftResult,
-  coursesFromDrafts,
   createCourseDraft,
   DraftHole,
   nextHoleNumber,
@@ -21,7 +20,6 @@ export type CourseEditorStatus = 'idle' | 'loading' | CourseCatalogState['kind']
 export type CourseSaveResult =
   | CourseWriteResult
   | { readonly kind: 'no-token' }
-  | { readonly kind: 'incomplete'; readonly error: string }
   | { readonly kind: 'not-editable' };
 
 const isEditable = (status: CourseEditorStatus): boolean =>
@@ -97,13 +95,9 @@ export class CourseEditorService {
     if (!token) {
       return { kind: 'no-token' };
     }
-    const courses = coursesFromDrafts(this.coursesState());
-    if (!courses.ok) {
-      return { kind: 'incomplete', error: courses.error };
-    }
     this.savingState.set(true);
     try {
-      const result = await this.catalog.save(repo, token, courses.value);
+      const result = await this.catalog.save(repo, token, this.coursesState());
       if (result.kind === 'saved') {
         this.statusState.set('loaded'); // Ban-dokumentet finns nu i data-repot.
       }

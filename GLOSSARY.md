@@ -9,7 +9,7 @@ En i appen registrerad golfbana med ett namn och 9 eller 18 hål.
 _Avoid_: golfbana, kurs, klubb
 
 **Hål**:
-Ett av en banas hål, identifierat av sitt hålnummer och knutet till exakt en greenpunkt.
+Ett av en banas hål, identifierat av sitt hålnummer och knutet till högst en greenpunkt. En bana kan sparas innan alla hål har greenpunkt; Spelläget visar då "Greenpunkt saknas" för det hålet.
 _Avoid_: hole, nummer
 
 **Greenpunkt**:

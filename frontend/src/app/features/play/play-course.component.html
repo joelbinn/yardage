@@ -4,7 +4,9 @@
 
     <p class="distance-label" id="distance-label">Avstånd till green</p>
     <output class="distance" role="status" aria-labelledby="distance-label">
-      @if (distance() !== undefined) {
+      @if (nav.hole.green === null) {
+        Greenpunkt saknas
+      } @else if (distance() !== undefined) {
         {{ distance() }} m
       } @else if (fix() === null) {
         –
