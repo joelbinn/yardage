@@ -11,6 +11,7 @@ export interface DraftHole {
   readonly par?: number;
 }
 
+/** En inläst `Course` är redan en giltig, fryst `CourseDraft` (alla hål har greenpunkt). */
 export interface CourseDraft {
   readonly id: string;
   readonly name: string;
@@ -20,11 +21,6 @@ export interface CourseDraft {
 export type CourseDraftResult =
   | { readonly ok: true; readonly value: CourseDraft }
   | { readonly ok: false; readonly error: string };
-
-/** En inläst Bana som utgångspunkt för redigering (Course är redan fryst och kompatibel). */
-export function draftFromCourse(course: Course): CourseDraft {
-  return course;
-}
 
 /** Skapar en ny Bana med namngivna hål 1..N utan greenpunkter. */
 export function createCourseDraft(

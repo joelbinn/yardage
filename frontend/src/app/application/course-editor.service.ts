@@ -5,7 +5,6 @@ import {
   CourseDraftResult,
   coursesFromDrafts,
   createCourseDraft,
-  draftFromCourse,
   DraftHole,
   nextHoleNumber,
   placeGreenPoint,
@@ -80,7 +79,7 @@ export class CourseEditorService {
     // Saknat ban-dokument = nytt data-repo: arbetskopian börjar tom och är redigerbar.
     this.loadedRepoKey = isEditable(state.kind) ? key : null;
     this.loadedRepo = isEditable(state.kind) ? repo : null;
-    this.coursesState.set(state.kind === 'loaded' ? state.courses.map(draftFromCourse) : []);
+    this.coursesState.set(state.kind === 'loaded' ? state.courses : []);
     this.selectedIdState.set(null);
     this.statusState.set(state.kind);
   }
