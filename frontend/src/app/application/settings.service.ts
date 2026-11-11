@@ -16,6 +16,11 @@ export class SettingsService {
   readonly dataRepo = this.repoState.asReadonly();
   readonly hasToken = computed(() => this.tokenState() !== null);
 
+  /** Tokenen för skrivning till data-repot; används endast av Redigeringslägets sparning. */
+  token(): string | null {
+    return this.tokenState();
+  }
+
   saveDataRepo(owner: string, name: string): DataRepoResult {
     const result = createDataRepo(owner, name);
     if (result.ok) {

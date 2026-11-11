@@ -1,4 +1,4 @@
-import { parseCoursesDocument } from './courses-document';
+import { parseCoursesDocument, serializeCoursesDocument } from './courses-document';
 
 const hole = (number: number, extra: Record<string, unknown> = {}) => ({
   number,
@@ -123,5 +123,28 @@ describe('parseCoursesDocument', () => {
     const broken = holes(9).map((h, i) => (i === 0 ? { ...h, par } : h));
 
     expectInvalid(document([course({ holes: broken })]), 'courses[0].holes[0].par');
+  });
+});
+
+describe('serializeCoursesDocument', () => {
+  it('should_write_versioned_document_as_indented_json_when_given_courses', () => {
+    const courses = [
+      { id: 'a', name: 'A', holes: [{ number: 1, green: { lat: 59.5, lng: 18.25 }, par: 3 }] },
+    ];
+
+    expect(serializeCoursesDocument(courses)).toBe(
+      '{\n  "version": 1,\n  "courses": [\n    {\n      "id": "a",\n      "name": "A",\n' +
+        '      "holes": [\n        {\n          "number": 1,\n          "green": {\n' +
+        '            "lat": 59.5,\n            "lng": 18.25\n          },\n          "par": 3\n' +
+        '        }\n      ]\n    }\n  ]\n}\n',
+    );
+  });
+
+  it('should_round_trip_through_parse_when_document_is_valid', () => {
+    const courses = [course()];
+
+    const parsed = parseCoursesDocument(JSON.parse(serializeCoursesDocument(courses)));
+
+    expect(parsed).toEqual({ ok: true, courses });
   });
 });

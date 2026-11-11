@@ -25,8 +25,13 @@ const DEFAULT_ZOOM = 5;
 
 type LeafletModule = typeof Leaflet;
 
-/** Leaflet laddas först när en karta skapas, så att den inte belastar initial bundle. */
-const loadLeaflet = (): Promise<LeafletModule> => import('leaflet');
+/**
+ * Leaflet laddas först när en karta skapas, så att den inte belastar initial bundle.
+ * Leaflet är CommonJS: i produktionsbygget hamnar API:t under `default`, i dev-servern
+ * direkt på modulnamnrymden — därför `default ?? modul`.
+ */
+const loadLeaflet = (): Promise<LeafletModule> =>
+  import('leaflet').then((m) => (m as LeafletModule & { default?: LeafletModule }).default ?? m);
 
 const toGreenPoint = (latLng: Leaflet.LatLng): GreenPoint => ({ lat: latLng.lat, lng: latLng.lng });
 const markerLabel = (holeNumber: number): string => `Greenpunkt för hål ${holeNumber}`;

@@ -3,6 +3,7 @@ import { GreenPoint } from '../domain/course';
 import {
   CourseDraft,
   CourseDraftResult,
+  coursesFromDrafts,
   createCourseDraft,
   draftFromCourse,
   DraftHole,
@@ -12,8 +13,17 @@ import {
 } from '../domain/course-draft';
 import { DataRepo } from '../domain/data-repo';
 import { CourseCatalogService, CourseCatalogState } from './course-catalog.service';
+import { CourseWriteResult } from './ports';
+import { SettingsService } from './settings.service';
 
 export type CourseEditorStatus = 'idle' | 'loading' | CourseCatalogState['kind'];
+
+/** Utfall av att spara arbetskopian till data-repot. */
+export type CourseSaveResult =
+  | CourseWriteResult
+  | { readonly kind: 'no-token' }
+  | { readonly kind: 'incomplete'; readonly error: string }
+  | { readonly kind: 'not-editable' };
 
 const isEditable = (status: CourseEditorStatus): boolean =>
   status === 'loaded' || status === 'missing';
@@ -28,16 +38,20 @@ const isEditable = (status: CourseEditorStatus): boolean =>
 @Injectable({ providedIn: 'root' })
 export class CourseEditorService {
   private readonly catalog = inject(CourseCatalogService);
+  private readonly settings = inject(SettingsService);
 
   private readonly statusState = signal<CourseEditorStatus>('idle');
   private readonly coursesState = signal<readonly CourseDraft[]>([]);
   private readonly selectedIdState = signal<string | null>(null);
   private readonly activeHoleNumberState = signal(1);
+  private readonly savingState = signal(false);
+  private loadedRepo: DataRepo | null = null;
   private loadedRepoKey: string | null = null;
   private loadSequence = 0;
 
   readonly status = this.statusState.asReadonly();
   readonly courses = this.coursesState.asReadonly();
+  readonly saving = this.savingState.asReadonly();
   /** Sant när arbetskopian finns: banor inlästa, eller data-repot saknar ännu ban-dokument. */
   readonly canEdit = computed(() => isEditable(this.statusState()));
   readonly selected = computed(
@@ -65,9 +79,39 @@ export class CourseEditorService {
     }
     // Saknat ban-dokument = nytt data-repo: arbetskopian börjar tom och är redigerbar.
     this.loadedRepoKey = isEditable(state.kind) ? key : null;
+    this.loadedRepo = isEditable(state.kind) ? repo : null;
     this.coursesState.set(state.kind === 'loaded' ? state.courses.map(draftFromCourse) : []);
     this.selectedIdState.set(null);
     this.statusState.set(state.kind);
+  }
+
+  /**
+   * Sparar hela arbetskopian till data-repot (last-write-wins, ADR-0002). Kräver token
+   * och att varje Hål har en greenpunkt.
+   */
+  async save(): Promise<CourseSaveResult> {
+    const repo = this.loadedRepo;
+    if (!repo) {
+      return { kind: 'not-editable' };
+    }
+    const token = this.settings.token();
+    if (!token) {
+      return { kind: 'no-token' };
+    }
+    const courses = coursesFromDrafts(this.coursesState());
+    if (!courses.ok) {
+      return { kind: 'incomplete', error: courses.error };
+    }
+    this.savingState.set(true);
+    try {
+      const result = await this.catalog.save(repo, token, courses.value);
+      if (result.kind === 'saved') {
+        this.statusState.set('loaded'); // Ban-dokumentet finns nu i data-repot.
+      }
+      return result;
+    } finally {
+      this.savingState.set(false);
+    }
   }
 
   create(name: string, holeCount: number): CourseDraftResult {

@@ -24,8 +24,13 @@
                 "input": "public"
               }
             ],
-            "styles": ["node_modules/leaflet/dist/leaflet.css", "src/styles.css"],
-            "allowedCommonJsDependencies": ["leaflet"]
+            "styles": [
+              "node_modules/leaflet/dist/leaflet.css",
+              "src/styles.css"
+            ],
+            "allowedCommonJsDependencies": [
+              "leaflet"
+            ]
           },
           "configurations": {
             "production": {
@@ -42,7 +47,19 @@
                 }
               ],
               "outputHashing": "all",
-              "serviceWorker": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json",
+              "index": {
+                "input": "src/index.prod.html",
+                "output": "index.html"
+              },
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              }
             },
             "development": {
               "optimization": false,

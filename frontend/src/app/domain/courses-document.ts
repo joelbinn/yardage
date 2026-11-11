@@ -37,6 +37,11 @@ export function parseCoursesDocument(input: unknown): CoursesParseResult {
   }
 }
 
+/** Skriver ban-dokumentet som läsbar JSON (indrag 2, avslutande radbrytning) för data-repot. */
+export function serializeCoursesDocument(courses: readonly Course[]): string {
+  return `${JSON.stringify({ version: COURSES_DOCUMENT_VERSION, courses }, null, 2)}\n`;
+}
+
 function readDocument(input: unknown): Course[] {
   const doc = requireObject(input, 'dokument');
   if (doc['version'] !== COURSES_DOCUMENT_VERSION) {

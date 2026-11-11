@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <!--
+    Strikt Content Security Policy (ticket 07, ADR-0003). Endast i produktionsbygget:
+    GitHub Pages kan inte sätta HTTP-headers. ng serve använder src/index.html utan policy
+    (dev-serverns HMR/websocket skulle annars kräva undantag).
+    Skript enbart från eget origin; connect-src = data-repots läsning och skrivning.
+    style-src tillåter inline eftersom Angular lägger komponentstilar i <style>-element.
+    Kritisk CSS inlinas inte (inlineCritical: false) - den kräver en inline onload-hanterare.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://server.arcgisonline.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Yardage</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <app-root></app-root>
+  <noscript>Vänligen aktivera JavaScript för att köra Yardage.</noscript>
+</body>
+</html>
