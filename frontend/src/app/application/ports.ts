@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Course, GreenPoint } from '../domain/course';
-import { GeoPoint } from '../domain/course-search';
+import { Observable } from 'rxjs';
+import { GeoPoint, PositionFix } from '../domain/geo';
 import { DataRepo } from '../domain/data-repo';
 
 /**
@@ -69,3 +70,14 @@ export interface IPlayerPositionReader {
 }
 
 export const PLAYER_POSITION_READER = new InjectionToken<IPlayerPositionReader>('PLAYER_POSITION_READER');
+
+/**
+ * Löpande bevakning av spelarens position (`watchPosition`). Strömmen sänder en
+ * ny avläsning när spelaren rör sig, eller `null` när platsåtkomst nekas/saknas.
+ * Bevakningen avslutas när prenumerationen avslutas.
+ */
+export interface IPlayerPositionWatcher {
+  watch(): Observable<PositionFix | null>;
+}
+
+export const PLAYER_POSITION_WATCHER = new InjectionToken<IPlayerPositionWatcher>('PLAYER_POSITION_WATCHER');

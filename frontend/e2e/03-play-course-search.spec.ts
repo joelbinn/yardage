@@ -59,7 +59,7 @@ test.describe('Ticket 03: Spelläge — bansökning närmast-först', () => {
       await page.getByRole('link', { name: /Ullna GK/ }).click();
 
       await expect(page).toHaveURL(/\/play\/ullna$/);
-      await expect(page.getByRole('heading', { name: 'Ullna GK' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Hål 1' })).toBeVisible();
     });
   });
 

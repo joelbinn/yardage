@@ -4,11 +4,11 @@
 
 **Blocked by:** 03 (Bansökning närmast-först)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Hålvyn visar endast hålnummer, "Avstånd till green" (hela meter), föregående/nästa och stäng
-- [ ] Avståndet uppdateras live via `watchPosition` och beräknas med haversine till greenpunkten
-- [ ] Noggrannhetsindikator för GPS visas diskret
-- [ ] Navigeringen är disabled i ändarna; stäng återgår till banvalet
-- [ ] Enhetstester för haversine-beräkningen
-- [ ] Playwright-test: hålvyn visar avstånd från emulerad position, uppdateras när positionen ändras, föregående/nästa är disabled i ändarna och stäng återgår till banvalet (ADR-0004)
+- [x] Hålvyn visar endast hålnummer, "Avstånd till green" (hela meter), föregående/nästa och stäng
+- [x] Avståndet uppdateras live via `watchPosition` och beräknas med haversine till greenpunkten
+- [x] Noggrannhetsindikator för GPS visas diskret
+- [x] Navigeringen är disabled i ändarna; stäng återgår till banvalet
+- [x] Enhetstester för haversine-beräkningen
+- [x] Playwright-test: hålvyn visar avstånd från emulerad position, uppdateras när positionen ändras, föregående/nästa är disabled i ändarna och stäng återgår till banvalet (ADR-0004)
