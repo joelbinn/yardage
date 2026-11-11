@@ -1,0 +1,99 @@
+<section class="page">
+  <h2>Redigeringsläge</h2>
+
+  @if (canEdit()) {
+    @if (status() === 'missing') {
+      <p class="message" role="status">
+        Data-repot har ännu inget ban-dokument (courses.json). Skapa den första banan nedan.
+      </p>
+    }
+    <div class="layout">
+      <div>
+        <section class="card" aria-labelledby="courses-heading">
+          <h3 id="courses-heading">Banor</h3>
+          @if (courses().length === 0) {
+            <p class="hint">Inga banor registrerade ännu.</p>
+          }
+          <ul aria-label="Banor" class="edit-courses">
+            @for (course of courses(); track course.id) {
+              <li [class.active]="selected()?.id === course.id">
+                <span class="edit-course-name"
+                  >{{ course.name }} — {{ course.holes.length }} hål</span
+                >
+                <button
+                  type="button"
+                  class="btn btn-small"
+                  [attr.aria-label]="'Redigera ' + course.name"
+                  (click)="select(course.id)"
+                >
+                  Redigera
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-small btn-subtle"
+                  [attr.aria-label]="'Ta bort ' + course.name"
+                  (click)="remove(course.id)"
+                >
+                  Ta bort
+                </button>
+              </li>
+            }
+          </ul>
+        </section>
+
+        <section class="card" aria-labelledby="create-heading">
+          <h3 id="create-heading">Skapa bana</h3>
+          <form [formGroup]="createForm" (ngSubmit)="create()" class="form">
+            <label class="field">
+              <span>Namn</span>
+              <input formControlName="name" autocomplete="off" />
+            </label>
+            <fieldset class="field">
+              <legend>Hålantal</legend>
+              @for (count of holeCounts; track count) {
+                <label class="radio">
+                  <input type="radio" formControlName="holeCount" [value]="count" />
+                  {{ count }} hål
+                </label>
+              }
+            </fieldset>
+            <button type="submit" class="btn btn-primary">Skapa bana</button>
+          </form>
+          @if (createError(); as error) {
+            <p role="alert" class="message error">{{ error }}</p>
+          }
+        </section>
+      </div>
+
+      @if (selected(); as course) {
+        <section class="card" aria-label="Vald bana">
+          <h3>{{ course.name }}</h3>
+          <p class="hint">Greenpunkter sätts i karteditorn.</p>
+          <ol class="hole-list">
+            @for (hole of course.holes; track hole.number) {
+              <li>Hål {{ hole.number }}{{ hole.green ? '' : ' — greenpunkt saknas' }}</li>
+            }
+          </ol>
+        </section>
+      }
+    </div>
+  } @else {
+    @switch (status()) {
+      @case ('not-configured') {
+        <p role="alert">Inget data-repo är inställt.</p>
+        <a routerLink="/settings">Gå till Inställningar</a>
+      }
+      @case ('unreachable') {
+        <p role="alert">Data-repot kunde inte nås. Kontrollera nätverket och inställningarna.</p>
+      }
+      @case ('invalid') {
+        <p role="alert">Ban-dokumentet kunde inte tolkas.</p>
+      }
+      @default {
+        <p>Hämtar banor…</p>
+      }
+    }
+  }
+
+  <a routerLink="/" class="back-link">Tillbaka till start</a>
+</section>

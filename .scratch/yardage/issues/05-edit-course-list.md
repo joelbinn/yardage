@@ -4,10 +4,10 @@
 
 **Blocked by:** 02 (Inställningar + läs banor)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Bankurslista visar alla banor från data-repot
-- [ ] Skapa bana: namn + hålantal (9 eller 18), hålen numrerade från 1
-- [ ] Ta bort bana ur listan (i minnet)
-- [ ] Välj bana för redigering
-- [ ] Playwright-test: skapa 9- och 18-hålsbana och ta bort en bana i listan (mockad läsning) (ADR-0004)
+- [x] Bankurslista visar alla banor från data-repot
+- [x] Skapa bana: namn + hålantal (9 eller 18), hålen numrerade från 1
+- [x] Ta bort bana ur listan (i minnet)
+- [x] Välj bana för redigering
+- [x] Playwright-test: skapa 9- och 18-hålsbana och ta bort en bana i listan (mockad läsning) (ADR-0004)
