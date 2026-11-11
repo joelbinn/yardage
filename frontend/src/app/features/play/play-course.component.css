@@ -1,0 +1,54 @@
+/* Läsbar i solljus: stor typografi, svart på vitt. */
+.hole-view {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #ffffff;
+  color: #000000;
+  text-align: center;
+}
+
+.hole-number {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.distance-label {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.distance {
+  display: block;
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.accuracy,
+.hint {
+  margin: 0;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.hole-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.hole-nav .btn {
+  font-size: 1.25rem;
+  color: #000000;
+  border-color: #000000;
+}
+
+.hole-nav .btn:disabled {
+  opacity: 0.35;
+}
