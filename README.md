@@ -2,6 +2,8 @@
 
 Webbapp för golfare som visar avståndet i meter från spelarens position till green. Se [spec](.scratch/yardage/spec.md) och [GLOSSARY.md](GLOSSARY.md).
 
+För dig som använder appen: se [användarmanualen](docs/ANVANDARMANUAL.md).
+
 ## Utveckling i devcontainer
 
 All utveckling sker i en devcontainer. Den ger en reproducerbar miljö (Node 24, `gh`, Claude Code, Playwrights systemberoenden) och fungerar samtidigt som sandlåda för AI-agenter: utgående trafik är default-deny, och `claude` körs utan behörighetsfrågor *inuti* containern.
