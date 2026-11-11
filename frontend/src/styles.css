@@ -189,3 +189,22 @@ button.btn {
 .course-holes {
   color: #4b5563;
 }
+
+/* Greenpunkt-markörer i karteditorn (Leaflet-divIcon, ligger utanför komponentens vy). */
+.green-point-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background-color: #15803d;
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+}
+
+.green-point-marker--active {
+  background-color: #facc15;
+  color: #111827;
+}

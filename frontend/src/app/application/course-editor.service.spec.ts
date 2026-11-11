@@ -157,4 +157,96 @@ describe('CourseEditorService', () => {
 
     expect(editor.selected()).toBeNull();
   });
+
+  describe('karteditor', () => {
+    async function editNewCourse() {
+      const { editor } = setup({ kind: 'missing' });
+      await editor.load(REPO);
+      const result = editor.create('Kortbanan', 9);
+      editor.select(result.ok ? result.value.id : '');
+      return editor;
+    }
+
+    it('should_make_first_hole_active_when_course_is_selected', async () => {
+      const editor = await editNewCourse();
+
+      expect(editor.activeHole()?.number).toBe(1);
+    });
+
+    it('should_have_no_active_hole_when_no_course_is_selected', async () => {
+      const { editor } = setup();
+      await editor.load(REPO);
+
+      expect(editor.activeHole()).toBeNull();
+    });
+
+    it('should_activate_chosen_hole', async () => {
+      const editor = await editNewCourse();
+
+      editor.activateHole(5);
+
+      expect(editor.activeHole()?.number).toBe(5);
+    });
+
+    it('should_set_green_point_for_active_hole_and_advance_to_next_hole_when_map_is_clicked', async () => {
+      const editor = await editNewCourse();
+      editor.activateHole(2);
+
+      editor.placeGreenPointForActiveHole({ lat: 59.4, lng: 18.1 });
+
+      expect(editor.selected()?.holes[1].green).toEqual({ lat: 59.4, lng: 18.1 });
+      expect(editor.courses()[0].holes[1].green).toEqual({ lat: 59.4, lng: 18.1 });
+      expect(editor.activeHole()?.number).toBe(3);
+    });
+
+    it('should_stay_on_last_hole_when_its_green_point_is_set', async () => {
+      const editor = await editNewCourse();
+      editor.activateHole(9);
+
+      editor.placeGreenPointForActiveHole({ lat: 1, lng: 2 });
+
+      expect(editor.activeHole()?.number).toBe(9);
+      expect(editor.activeHole()?.green).toEqual({ lat: 1, lng: 2 });
+    });
+
+    it('should_move_green_point_of_dragged_hole_without_changing_active_hole', async () => {
+      const editor = await editNewCourse();
+      editor.placeGreenPointForActiveHole({ lat: 1, lng: 2 });
+
+      editor.moveGreenPoint(1, { lat: 3, lng: 4 });
+
+      expect(editor.selected()?.holes[0].green).toEqual({ lat: 3, lng: 4 });
+      expect(editor.activeHole()?.number).toBe(2);
+    });
+
+    it('should_set_and_clear_optional_par_per_hole', async () => {
+      const editor = await editNewCourse();
+
+      expect(editor.setPar(4, 3).ok).toBe(true);
+      expect(editor.selected()?.holes[3].par).toBe(3);
+
+      editor.setPar(4, null);
+      expect(editor.selected()?.holes[3].par).toBeUndefined();
+    });
+
+    it('should_leave_course_unchanged_when_par_is_invalid', async () => {
+      const editor = await editNewCourse();
+      const before = editor.selected();
+
+      const result = editor.setPar(4, 0);
+
+      expect(result.ok).toBe(false);
+      expect(editor.selected()).toBe(before);
+    });
+
+    it('should_ignore_map_click_when_no_course_is_selected', async () => {
+      const { editor } = setup();
+      await editor.load(REPO);
+      const before = editor.courses();
+
+      editor.placeGreenPointForActiveHole({ lat: 1, lng: 2 });
+
+      expect(editor.courses()).toBe(before);
+    });
+  });
 });

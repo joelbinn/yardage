@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { Course } from '../domain/course';
+import { Course, GreenPoint } from '../domain/course';
 import { GeoPoint } from '../domain/course-search';
 import { DataRepo } from '../domain/data-repo';
 
@@ -31,6 +31,37 @@ export interface ICourseReader {
 
 export const SETTINGS_STORE = new InjectionToken<ISettingsStore>('SETTINGS_STORE');
 export const COURSE_READER = new InjectionToken<ICourseReader>('COURSE_READER');
+
+/** En greenpunkt som karteditorn visar som markör. */
+export interface GreenPointMarker {
+  readonly holeNumber: number;
+  readonly green: GreenPoint;
+  readonly active: boolean;
+}
+
+/** Användarens handlingar på kartan, rapporterade av kartadaptern. */
+export interface CourseMapEvents {
+  mapClicked(point: GreenPoint): void;
+  markerMoved(holeNumber: number, point: GreenPoint): void;
+}
+
+/** En satellitkarta med greenpunkter (karteditorn, ticket 06). */
+export interface ICourseMap {
+  showMarkers(markers: readonly GreenPointMarker[]): void;
+  /** Zoomar in kartan så att alla punkter syns; tom lista lämnar vyn orörd. */
+  fitTo(points: readonly GreenPoint[]): void;
+  destroy(): void;
+}
+
+/**
+ * Abstract Factory: skapar en karta i ett värdelement, oberoende av kartbibliotek.
+ * Asynkron så att adaptern kan ladda kartbiblioteket först när det behövs.
+ */
+export interface ICourseMapFactory {
+  create(host: HTMLElement, events: CourseMapEvents): Promise<ICourseMap>;
+}
+
+export const COURSE_MAP_FACTORY = new InjectionToken<ICourseMapFactory>('COURSE_MAP_FACTORY');
 
 /** Engångsläsning av spelarens position; `null` när platsåtkomst nekas eller saknas. */
 export interface IPlayerPositionReader {

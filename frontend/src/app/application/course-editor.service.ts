@@ -1,9 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { GreenPoint } from '../domain/course';
 import {
   CourseDraft,
   CourseDraftResult,
   createCourseDraft,
   draftFromCourse,
+  DraftHole,
+  nextHoleNumber,
+  placeGreenPoint,
+  setHolePar,
 } from '../domain/course-draft';
 import { DataRepo } from '../domain/data-repo';
 import { CourseCatalogService, CourseCatalogState } from './course-catalog.service';
@@ -17,8 +22,8 @@ const isEditable = (status: CourseEditorStatus): boolean =>
  * Application Service för Redigeringsläget: håller banorna under redigering i minnet
  * (en arbetskopia av data-repots ban-dokument) och vilken Bana som är vald.
  *
- * Ticket 06 (karteditor) utökar med ändringar av hål i vald bana, ticket 07 med att
- * spara `courses()` till data-repot. Affärsreglerna ligger i domain/course-draft.
+ * Karteditorn (ticket 06) ändrar hålen i vald Bana via ett aktivt hål; ticket 07 sparar
+ * `courses()` till data-repot. Affärsreglerna ligger i domain/course-draft.
  */
 @Injectable({ providedIn: 'root' })
 export class CourseEditorService {
@@ -27,6 +32,7 @@ export class CourseEditorService {
   private readonly statusState = signal<CourseEditorStatus>('idle');
   private readonly coursesState = signal<readonly CourseDraft[]>([]);
   private readonly selectedIdState = signal<string | null>(null);
+  private readonly activeHoleNumberState = signal(1);
   private loadedRepoKey: string | null = null;
   private loadSequence = 0;
 
@@ -36,6 +42,10 @@ export class CourseEditorService {
   readonly canEdit = computed(() => isEditable(this.statusState()));
   readonly selected = computed(
     () => this.coursesState().find((c) => c.id === this.selectedIdState()) ?? null,
+  );
+  /** Hålet i vald Bana som klick på kartan sätter greenpunkt för. */
+  readonly activeHole = computed<DraftHole | null>(
+    () => this.selected()?.holes.find((h) => h.number === this.activeHoleNumberState()) ?? null,
   );
 
   /**
@@ -78,5 +88,45 @@ export class CourseEditorService {
 
   select(id: string): void {
     this.selectedIdState.set(this.coursesState().some((c) => c.id === id) ? id : null);
+    this.activeHoleNumberState.set(1);
+  }
+
+  activateHole(holeNumber: number): void {
+    this.activeHoleNumberState.set(holeNumber);
+  }
+
+  /** Klick på kartan: sätter aktivt håls greenpunkt och går vidare till nästa hål. */
+  placeGreenPointForActiveHole(green: GreenPoint): void {
+    const holeNumber = this.activeHoleNumberState();
+    this.updateSelected((draft) => placeGreenPoint(draft, holeNumber, green));
+    const draft = this.selected();
+    if (draft) {
+      this.activeHoleNumberState.set(nextHoleNumber(draft, holeNumber));
+    }
+  }
+
+  /** Dragen markör: korrigerar ett befintligt håls greenpunkt. */
+  moveGreenPoint(holeNumber: number, green: GreenPoint): void {
+    this.updateSelected((draft) => placeGreenPoint(draft, holeNumber, green));
+  }
+
+  setPar(holeNumber: number, par: number | null): CourseDraftResult {
+    const draft = this.selected();
+    if (!draft) {
+      return { ok: false, error: 'Ingen bana är vald.' };
+    }
+    const result = setHolePar(draft, holeNumber, par);
+    if (result.ok) {
+      this.updateSelected(() => result.value);
+    }
+    return result;
+  }
+
+  private updateSelected(change: (draft: CourseDraft) => CourseDraft): void {
+    const id = this.selectedIdState();
+    if (id === null) {
+      return;
+    }
+    this.coursesState.update((courses) => courses.map((c) => (c.id === id ? change(c) : c)));
   }
 }
