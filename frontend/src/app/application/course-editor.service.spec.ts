@@ -355,8 +355,8 @@ describe('CourseEditorService', () => {
       expect(editor.status()).toBe('loaded');
     });
 
-    it('should_keep_reading_data_repo_when_save_failed', async () => {
-      const { editor, writer, reader } = setup();
+    it('should_keep_data_repo_courses_when_save_failed', async () => {
+      const { editor, writer } = setup();
       writer.result = { kind: 'failed', error: 'x' };
       await editor.load(REPO);
       editor.remove('ullna');
@@ -365,7 +365,6 @@ describe('CourseEditorService', () => {
       const state = await TestBed.inject(CourseCatalogService).load(REPO);
 
       expect(state.kind === 'loaded' && state.courses.map((c) => c.id)).toEqual(['ullna']);
-      expect(reader.calls).toBe(2);
     });
   });
 });

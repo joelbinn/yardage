@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
-import { CourseCatalogService } from '../../application/course-catalog.service';
+import { injectCourseCatalog } from '../../application/course-catalog.service';
 import { PLAYER_POSITION_WATCHER } from '../../application/ports';
-import { SettingsService } from '../../application/settings.service';
 import { distanceToGreen, holeNavigation } from '../../domain/hole-play';
 
 /**
@@ -20,14 +19,10 @@ import { distanceToGreen, holeNavigation } from '../../domain/hole-play';
   styleUrl: './play-course.component.css',
 })
 export class PlayCourseComponent {
-  private readonly settings = inject(SettingsService);
-  private readonly catalog = inject(CourseCatalogService);
   private readonly courseId = toSignal(inject(ActivatedRoute).paramMap.pipe(map((p) => p.get('courseId'))));
 
-  protected readonly catalogResource = resource({
-    params: () => this.settings.dataRepo(),
-    loader: ({ params }) => this.catalog.load(params),
-  });
+  // Delar inläsningen med bansökningen: hålvyn öppnas utan ny nätverksläsning.
+  protected readonly catalogResource = injectCourseCatalog();
 
   // undefined = väntar på första avläsningen, null = platsåtkomst saknas.
   protected readonly fix = toSignal(inject(PLAYER_POSITION_WATCHER).watch(), { initialValue: undefined });

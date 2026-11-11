@@ -78,6 +78,24 @@ test.describe('Ticket 04: Spelläge — hålvyn med live Avstånd', () => {
     await expect(page.getByRole('heading', { name: 'Hål 8' })).toBeVisible();
   });
 
+  test('hålvyn återanvänder bansökningens inläsning av ban-dokumentet', async ({ page }) => {
+    let reads = 0;
+    await page.route(RAW_URL, (route) => {
+      reads += 1;
+      return route.fulfill({ status: 200, contentType: 'text/plain', body: JSON.stringify(coursesDocument) });
+    });
+    await page.goto('/');
+    await page.evaluate((owner) => {
+      localStorage.setItem('yardage.dataRepo', JSON.stringify({ owner, name: 'yardage-data' }));
+    }, OWNER);
+    await page.getByRole('link', { name: 'Spelläge' }).click();
+
+    await page.getByRole('link', { name: /Ullna GK/ }).click();
+
+    await expect(distance(page)).toHaveText('111 m');
+    expect(reads).toBe(1);
+  });
+
   test('stäng återgår till banvalet', async ({ page }) => {
     await openHoleView(page);
 
