@@ -4,11 +4,11 @@
 
 **Blocked by:** 02 (Inställningar + läs banor)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Banlistan sorteras närmast-först med GPS-position och centroid-beräkning
-- [ ] Textfilter på banans namn fungerar
-- [ ] Alfabetisk fallback när platsåtkomst nekas eller saknas
-- [ ] Val av bana navigerar vidare i Spelläget
-- [ ] Enhetstester för centroid- och sorteringslogik
-- [ ] Playwright-test: med emulerad geolocation sorteras banorna närmast-först; filtret fungerar; nekad platsåtkomst ger alfabetisk lista (ADR-0004)
+- [x] Banlistan sorteras närmast-först med GPS-position och centroid-beräkning
+- [x] Textfilter på banans namn fungerar
+- [x] Alfabetisk fallback när platsåtkomst nekas eller saknas
+- [x] Val av bana navigerar vidare i Spelläget
+- [x] Enhetstester för centroid- och sorteringslogik
+- [x] Playwright-test: med emulerad geolocation sorteras banorna närmast-först; filtret fungerar; nekad platsåtkomst ger alfabetisk lista (ADR-0004)

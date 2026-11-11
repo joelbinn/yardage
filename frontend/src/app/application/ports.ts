@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Course } from '../domain/course';
+import { GeoPoint } from '../domain/course-search';
 import { DataRepo } from '../domain/data-repo';
 
 /**
@@ -30,3 +31,10 @@ export interface ICourseReader {
 
 export const SETTINGS_STORE = new InjectionToken<ISettingsStore>('SETTINGS_STORE');
 export const COURSE_READER = new InjectionToken<ICourseReader>('COURSE_READER');
+
+/** Engångsläsning av spelarens position; `null` när platsåtkomst nekas eller saknas. */
+export interface IPlayerPositionReader {
+  currentPosition(): Promise<GeoPoint | null>;
+}
+
+export const PLAYER_POSITION_READER = new InjectionToken<IPlayerPositionReader>('PLAYER_POSITION_READER');
