@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IPlayerPositionReader } from '../application/ports';
-import { GeoPoint } from '../domain/course-search';
+import { GeoPoint } from '../domain/geo';
 
 /** Hur länge bansökningen väntar på en GPS-position innan den faller tillbaka. */
 const POSITION_TIMEOUT_MS = 10_000;

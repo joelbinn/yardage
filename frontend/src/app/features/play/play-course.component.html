@@ -1,0 +1,34 @@
+<section class="hole-view">
+  @if (navigation(); as nav) {
+    <h2 class="hole-number">Hål {{ nav.hole.number }}</h2>
+
+    <p class="distance-label" id="distance-label">Avstånd till green</p>
+    <output class="distance" role="status" aria-labelledby="distance-label">
+      @if (distance() !== undefined) {
+        {{ distance() }} m
+      } @else if (fix() === null) {
+        –
+      } @else {
+        …
+      }
+    </output>
+
+    @if (fix() === null) {
+      <p class="hint" role="alert">Platsåtkomst saknas — Avståndet kan inte beräknas.</p>
+    } @else if (accuracy() !== undefined) {
+      <p class="accuracy">±{{ accuracy() }} m</p>
+    } @else {
+      <p class="accuracy">Väntar på GPS…</p>
+    }
+
+    <div class="hole-nav">
+      <button type="button" class="btn" (click)="previous()" [disabled]="!nav.hasPrevious">Föregående hål</button>
+      <button type="button" class="btn" (click)="next()" [disabled]="!nav.hasNext">Nästa hål</button>
+    </div>
+  } @else if (catalogResource.isLoading()) {
+    <p>Hämtar bana…</p>
+  } @else {
+    <p role="alert">Banan hittades inte.</p>
+  }
+  <a routerLink="/play" class="btn btn-subtle close">Stäng</a>
+</section>
