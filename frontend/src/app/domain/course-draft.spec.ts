@@ -1,4 +1,4 @@
-import { createCourseDraft, placeGreenPoint, setHolePar } from './course-draft';
+import { coursesFromDrafts, createCourseDraft, placeGreenPoint, setHolePar } from './course-draft';
 
 describe('createCourseDraft', () => {
   it('should_create_course_with_holes_numbered_from_1_when_input_is_valid', () => {
@@ -117,6 +117,43 @@ describe('setHolePar', () => {
     expect(setHolePar(nineHoles(), 2, par)).toEqual({
       ok: false,
       error: 'Par måste vara ett positivt heltal.',
+    });
+  });
+});
+
+describe('coursesFromDrafts', () => {
+  const complete = {
+    id: 'ullna',
+    name: 'Ullna GK',
+    holes: Array.from({ length: 9 }, (_, i) => ({
+      number: i + 1,
+      green: { lat: 59.4, lng: 18.1 },
+      ...(i === 0 ? { par: 4 } : {}),
+    })),
+  };
+
+  it('should_return_courses_when_every_hole_has_a_green_point', () => {
+    const result = coursesFromDrafts([complete]);
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value).toEqual([complete]);
+      expect(result.value[0].holes[0]).toEqual({ number: 1, green: { lat: 59.4, lng: 18.1 }, par: 4 });
+    }
+  });
+
+  it('should_return_empty_list_when_there_are_no_courses', () => {
+    expect(coursesFromDrafts([])).toEqual({ ok: true, value: [] });
+  });
+
+  it('should_reject_when_a_hole_lacks_green_point', () => {
+    const draft = createCourseDraft('Kortbanan', 9, []);
+    if (!draft.ok) throw new Error('setup');
+    const partly = placeGreenPoint(draft.value, 1, { lat: 59, lng: 18 });
+
+    expect(coursesFromDrafts([complete, partly])).toEqual({
+      ok: false,
+      error: 'Kortbanan saknar greenpunkt för hål 2, 3, 4, 5, 6, 7, 8, 9.',
     });
   });
 });

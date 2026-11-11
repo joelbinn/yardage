@@ -63,6 +63,29 @@
             <p role="alert" class="message error">{{ error }}</p>
           }
         </section>
+
+        <section class="card" aria-labelledby="save-heading">
+          <h3 id="save-heading">Spara</h3>
+          <p class="hint">
+            Hela ban-dokumentet skrivs till data-repot och ersätter det som finns där.
+          </p>
+          @if (!hasToken()) {
+            <p class="hint">
+              Sparning kräver en GitHub-token. <a routerLink="/settings">Lägg in den under Inställningar.</a>
+            </p>
+          }
+          <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="save()">
+            {{ saving() ? 'Sparar…' : 'Spara banor' }}
+          </button>
+          @if (saveFeedback(); as feedback) {
+            <p [attr.role]="feedback.error ? 'alert' : 'status'" [class.error]="feedback.error" class="message">
+              {{ feedback.text }}
+            </p>
+            @if (feedback.toSettings) {
+              <a routerLink="/settings">Gå till Inställningar</a>
+            }
+          }
+        </section>
       </div>
     </div>
 

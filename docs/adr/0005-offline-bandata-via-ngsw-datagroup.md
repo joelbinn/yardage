@@ -12,4 +12,4 @@ Spelaren ska kunna slå upp Avstånd utan mobiltäckning (ticket 08). Vi beslöt
 
 - Bara `https://raw.githubusercontent.com/*/*/main/courses.json` matchas. GitHub API-anrop (skrivningar i Redigeringsläge) och kartiles cachas inte.
 - Utan nätverk och utan tidigare hämtning svarar läsaren `unreachable` som förut.
-- I `ng serve` finns ingen service worker. Offline-e2e (`e2e/*offline.spec.ts`) körs i Playwright-projektet `offline` mot `dist/` (serverat av `e2e/support/static-server.mjs` på `PW_OFFLINE_PORT`, standard 4280) och kräver därför `npm run build` först; `npm run check` bygger före e2e.
+- I `ng serve` finns ingen service worker. Offline-e2e (`e2e/*-offline.spec.ts`, och CSP-e2e `e2e/*-prod.spec.ts`) körs i Playwright-projektet `offline` mot `dist/` (serverat av `e2e/support/static-server.mjs` på `PW_OFFLINE_PORT`, standard 4280) och kräver därför `npm run build` först; `npm run check` bygger före e2e.

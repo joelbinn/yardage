@@ -2,7 +2,17 @@ import { TestBed } from '@angular/core/testing';
 import { Course } from '../domain/course';
 import { DataRepo } from '../domain/data-repo';
 import { CourseEditorService } from './course-editor.service';
-import { COURSE_READER, CourseReadResult, ICourseReader } from './ports';
+import { CourseCatalogService } from './course-catalog.service';
+import {
+  COURSE_READER,
+  COURSE_WRITER,
+  CourseReadResult,
+  CourseWriteResult,
+  ICourseReader,
+  ICourseWriter,
+  ISettingsStore,
+  SETTINGS_STORE,
+} from './ports';
 
 const REPO: DataRepo = { owner: 'testare', name: 'yardage-data' };
 
@@ -25,12 +35,38 @@ class FakeCourseReader implements ICourseReader {
   }
 }
 
+class FakeCourseWriter implements ICourseWriter {
+  readonly writes: { repo: DataRepo; token: string; courses: readonly Course[] }[] = [];
+  result: CourseWriteResult = { kind: 'saved' };
+  write(repo: DataRepo, token: string, courses: readonly Course[]): Promise<CourseWriteResult> {
+    this.writes.push({ repo, token, courses });
+    return Promise.resolve(this.result);
+  }
+}
+
+class InMemorySettingsStore implements ISettingsStore {
+  constructor(private token: string | null) {}
+  loadDataRepo = () => REPO;
+  saveDataRepo = () => undefined;
+  loadToken = () => this.token;
+  saveToken = (token: string) => (this.token = token);
+  clearToken = () => (this.token = null);
+}
+
 function setup(
   result: CourseReadResult = { kind: 'loaded', courses: [course('ullna', 'Ullna GK', 18)] },
+  token: string | null = 'github_pat_test',
 ) {
   const reader = new FakeCourseReader(result);
-  TestBed.configureTestingModule({ providers: [{ provide: COURSE_READER, useValue: reader }] });
-  return { editor: TestBed.inject(CourseEditorService), reader };
+  const writer = new FakeCourseWriter();
+  TestBed.configureTestingModule({
+    providers: [
+      { provide: COURSE_READER, useValue: reader },
+      { provide: COURSE_WRITER, useValue: writer },
+      { provide: SETTINGS_STORE, useValue: new InMemorySettingsStore(token) },
+    ],
+  });
+  return { editor: TestBed.inject(CourseEditorService), reader, writer };
 }
 
 describe('CourseEditorService', () => {
@@ -247,6 +283,89 @@ describe('CourseEditorService', () => {
       editor.placeGreenPointForActiveHole({ lat: 1, lng: 2 });
 
       expect(editor.courses()).toBe(before);
+    });
+  });
+
+  describe('spara', () => {
+    it('should_write_all_courses_to_loaded_data_repo_with_token_when_saving', async () => {
+      const { editor, writer } = setup();
+      await editor.load(REPO);
+      editor.remove('ullna');
+      editor.create('Kortbanan', 9);
+      editor.select('kortbanan');
+      Array.from({ length: 9 }).forEach(() => editor.placeGreenPointForActiveHole({ lat: 59, lng: 18 }));
+
+      expect(await editor.save()).toEqual({ kind: 'saved' });
+
+      expect(writer.writes).toHaveLength(1);
+      expect(writer.writes[0].repo).toEqual(REPO);
+      expect(writer.writes[0].token).toBe('github_pat_test');
+      expect(writer.writes[0].courses.map((c) => c.id)).toEqual(['kortbanan']);
+      expect(writer.writes[0].courses[0].holes[8].green).toEqual({ lat: 59, lng: 18 });
+    });
+
+    it('should_ask_for_token_without_writing_when_no_token_is_set', async () => {
+      const { editor, writer } = setup(undefined, null);
+      await editor.load(REPO);
+
+      expect(await editor.save()).toEqual({ kind: 'no-token' });
+      expect(writer.writes).toHaveLength(0);
+    });
+
+    it('should_refuse_to_save_when_a_hole_lacks_green_point', async () => {
+      const { editor, writer } = setup();
+      await editor.load(REPO);
+      editor.create('Kortbanan', 9);
+
+      expect(await editor.save()).toEqual({
+        kind: 'incomplete',
+        error: 'Kortbanan saknar greenpunkt för hål 1, 2, 3, 4, 5, 6, 7, 8, 9.',
+      });
+      expect(writer.writes).toHaveLength(0);
+    });
+
+    it('should_pass_on_unauthorized_when_github_rejects_token', async () => {
+      const { editor, writer } = setup();
+      writer.result = { kind: 'unauthorized' };
+      await editor.load(REPO);
+
+      expect(await editor.save()).toEqual({ kind: 'unauthorized' });
+    });
+
+    it('should_refuse_to_save_when_nothing_is_loaded', async () => {
+      const { editor, writer } = setup({ kind: 'unreachable' });
+      await editor.load(REPO);
+
+      expect(await editor.save()).toEqual({ kind: 'not-editable' });
+      expect(writer.writes).toHaveLength(0);
+    });
+
+    it('should_let_spellaget_read_saved_courses_when_save_succeeded', async () => {
+      const { editor, reader } = setup({ kind: 'missing' });
+      await editor.load(REPO);
+      editor.create('Kortbanan', 9);
+      editor.select('kortbanan');
+      Array.from({ length: 9 }).forEach(() => editor.placeGreenPointForActiveHole({ lat: 59, lng: 18 }));
+      await editor.save();
+
+      const state = await TestBed.inject(CourseCatalogService).load(REPO);
+
+      expect(state.kind === 'loaded' && state.courses.map((c) => c.name)).toEqual(['Kortbanan']);
+      expect(reader.calls).toBe(1);
+      expect(editor.status()).toBe('loaded');
+    });
+
+    it('should_keep_reading_data_repo_when_save_failed', async () => {
+      const { editor, writer, reader } = setup();
+      writer.result = { kind: 'failed', error: 'x' };
+      await editor.load(REPO);
+      editor.remove('ullna');
+      await editor.save();
+
+      const state = await TestBed.inject(CourseCatalogService).load(REPO);
+
+      expect(state.kind === 'loaded' && state.courses.map((c) => c.id)).toEqual(['ullna']);
+      expect(reader.calls).toBe(2);
     });
   });
 });

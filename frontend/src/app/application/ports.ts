@@ -30,8 +30,24 @@ export interface ICourseReader {
   read(repo: DataRepo): Promise<CourseReadResult>;
 }
 
+/** Utfall av att skriva ban-dokumentet till data-repot. */
+export type CourseWriteResult =
+  | { readonly kind: 'saved' }
+  /** Tokenen saknar behörighet till data-repot eller är ogiltig/återkallad. */
+  | { readonly kind: 'unauthorized' }
+  | { readonly kind: 'failed'; readonly error: string };
+
+/**
+ * Skrivning av hela ban-dokumentet till ett data-repo med användarens token.
+ * Last-write-wins och utan historik (ADR-0002).
+ */
+export interface ICourseWriter {
+  write(repo: DataRepo, token: string, courses: readonly Course[]): Promise<CourseWriteResult>;
+}
+
 export const SETTINGS_STORE = new InjectionToken<ISettingsStore>('SETTINGS_STORE');
 export const COURSE_READER = new InjectionToken<ICourseReader>('COURSE_READER');
+export const COURSE_WRITER = new InjectionToken<ICourseWriter>('COURSE_WRITER');
 
 /** En greenpunkt som karteditorn visar som markör. */
 export interface GreenPointMarker {

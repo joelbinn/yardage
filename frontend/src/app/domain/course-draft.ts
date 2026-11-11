@@ -77,6 +77,28 @@ export function setHolePar(
   return { ok: true, value: updateHole(draft, holeNumber, (hole) => ({ ...hole, par })) };
 }
 
+export type CoursesFromDraftsResult =
+  | { readonly ok: true; readonly value: readonly Course[] }
+  | { readonly ok: false; readonly error: string };
+
+/**
+ * Gör om arbetskopian till färdiga Banor inför sparning. Ban-dokumentet kräver en
+ * greenpunkt för varje Hål, så första Banan med saknade greenpunkter avvisar hela listan.
+ */
+export function coursesFromDrafts(drafts: readonly CourseDraft[]): CoursesFromDraftsResult {
+  const incomplete = drafts.find((draft) => draft.holes.some((h) => h.green === null));
+  if (incomplete) {
+    const missing = incomplete.holes.filter((h) => h.green === null).map((h) => h.number);
+    return { ok: false, error: `${incomplete.name} saknar greenpunkt för hål ${missing.join(', ')}.` };
+  }
+  return { ok: true, value: Object.freeze(drafts.map(toCourse)) };
+}
+
+function toCourse(draft: CourseDraft): Course {
+  const holes = draft.holes.map((h) => Object.freeze({ ...h, green: h.green as GreenPoint }));
+  return Object.freeze({ id: draft.id, name: draft.name, holes: Object.freeze(holes) });
+}
+
 /** Hålet efter `holeNumber` i spelordning; sista hålet förblir sist. */
 export function nextHoleNumber(draft: CourseDraft, holeNumber: number): number {
   return draft.holes.some((h) => h.number === holeNumber + 1) ? holeNumber + 1 : holeNumber;

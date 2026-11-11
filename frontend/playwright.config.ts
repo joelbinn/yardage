@@ -2,9 +2,10 @@ import { defineConfig, devices } from '@playwright/test';
 
 // PW_PORT låter parallella worktrees köra e2e utan att dela dev-server.
 const port = Number(process.env['PW_PORT'] ?? 4200);
-// Offline-testerna (ticket 08) kräver produktionsbygget med service worker, serverat från dist/.
+// Offline- och CSP-testerna (ticket 08, 07) kräver produktionsbygget med service worker och
+// CSP-metatagg, serverat från dist/.
 const offlinePort = Number(process.env['PW_OFFLINE_PORT'] ?? 4280);
-const OFFLINE_SPECS = /offline\.spec\.ts$/;
+const PROD_SPECS = /-(offline|prod)\.spec\.ts$/;
 
 export default defineConfig({
   testDir: './e2e',
@@ -19,12 +20,12 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      testIgnore: OFFLINE_SPECS,
+      testIgnore: PROD_SPECS,
       use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${port}` },
     },
     {
       name: 'offline',
-      testMatch: OFFLINE_SPECS,
+      testMatch: PROD_SPECS,
       use: {
         ...devices['Desktop Chrome'],
         baseURL: `http://localhost:${offlinePort}/yardage/`,
