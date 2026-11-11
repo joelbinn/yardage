@@ -82,7 +82,7 @@ test.describe('Ticket 05: Redigeringsläge — bankurslista + skapa Bana', () =>
     await expect(page.getByRole('list', { name: 'Banor' }).getByRole('listitem')).toHaveCount(1);
   });
 
-  test('nytt data-repo utan ban-dokument låter användaren skapa den första banan', async ({
+  test('nytt data-repo utan ban-dokument kan få sin första bana i Redigeringsläget', async ({
     page,
   }) => {
     await openEditModeWithMockedRepo(page, null);

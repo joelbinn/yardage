@@ -38,7 +38,7 @@ export type CourseWriteResult =
   | { readonly kind: 'failed'; readonly error: string };
 
 /**
- * Skrivning av hela ban-dokumentet till ett data-repo med användarens token.
+ * Skrivning av hela ban-dokumentet till ett data-repo med den inställda GitHub-tokenen.
  * Last-write-wins och utan historik (ADR-0002).
  */
 export interface ICourseWriter {
@@ -56,7 +56,7 @@ export interface GreenPointMarker {
   readonly active: boolean;
 }
 
-/** Användarens handlingar på kartan, rapporterade av kartadaptern. */
+/** Handlingar på kartan i Redigeringsläget, rapporterade av kartadaptern. */
 export interface CourseMapEvents {
   mapClicked(point: GreenPoint): void;
   markerMoved(holeNumber: number, point: GreenPoint): void;
