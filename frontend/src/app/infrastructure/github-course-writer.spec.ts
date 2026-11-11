@@ -6,7 +6,11 @@ import { GitHubCourseWriter } from './github-course-writer';
 
 const API = 'https://api.github.com/repos/joel/yardage-data/git';
 const repo = { owner: 'joel', name: 'yardage-data' };
+const CONTENTS_URL = 'https://api.github.com/repos/joel/yardage-data/contents/courses.json';
 const TOKEN = 'github_pat_test';
+
+const decodeBase64Utf8 = (b64: string): string =>
+  new TextDecoder().decode(Uint8Array.from(atob(b64), (ch) => ch.charCodeAt(0)));
 
 const courses: readonly Course[] = [
   { id: 'a', name: 'A', holes: [{ number: 1, green: { lat: 59.5, lng: 18.25 } }] },
@@ -88,17 +92,41 @@ describe('GitHubCourseWriter', () => {
     expect(await pending).toEqual({ kind: 'unauthorized' });
   });
 
-  it('should_explain_when_data_repo_is_empty', async () => {
+  it('should_create_initial_commit_via_contents_api_when_data_repo_is_empty', async () => {
     const pending = writer.write(repo, TOKEN, courses);
     (await expectRequest('POST', `${API}/blobs`)).flush(
       { message: 'Git Repository is empty.' },
       { status: 409, statusText: 'Conflict' },
     );
 
-    expect(await pending).toEqual({
-      kind: 'failed',
-      error: 'Data-repot är tomt. Skapa det med en första commit (t.ex. en README) och försök igen.',
-    });
+    const put = await expectRequest('PUT', CONTENTS_URL);
+    expect(put.request.body.branch).toBe('main');
+    expect(typeof put.request.body.message).toBe('string');
+    expect(put.request.body.sha).toBeUndefined();
+    expect(JSON.parse(decodeBase64Utf8(put.request.body.content))).toEqual({ version: 1, courses });
+    put.flush({ commit: { sha: 'c' } }, { status: 201, statusText: 'Created' });
+
+    expect(await pending).toEqual({ kind: 'saved' });
+  });
+
+  it('should_encode_non_ascii_names_as_utf8_when_creating_initial_commit', async () => {
+    const swedish: readonly Course[] = [{ ...courses[0], name: 'Åkersberga GK' }];
+    const pending = writer.write(repo, TOKEN, swedish);
+    (await expectRequest('POST', `${API}/blobs`)).flush({}, { status: 409, statusText: 'Conflict' });
+
+    const put = await expectRequest('PUT', CONTENTS_URL);
+    expect(JSON.parse(decodeBase64Utf8(put.request.body.content)).courses[0].name).toBe('Åkersberga GK');
+    put.flush({}, { status: 201, statusText: 'Created' });
+
+    expect(await pending).toEqual({ kind: 'saved' });
+  });
+
+  it('should_return_unauthorized_when_initial_commit_is_rejected', async () => {
+    const pending = writer.write(repo, TOKEN, courses);
+    (await expectRequest('POST', `${API}/blobs`)).flush({}, { status: 409, statusText: 'Conflict' });
+    (await expectRequest('PUT', CONTENTS_URL)).flush({}, { status: 403, statusText: 'Forbidden' });
+
+    expect(await pending).toEqual({ kind: 'unauthorized' });
   });
 
   it('should_return_failed_when_network_fails', async () => {
