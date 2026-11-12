@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1794000856330,
+  "timestamp": 1794512975842,
   "index": "/yardage/index.html",
   "assetGroups": [
     {
@@ -11,11 +11,13 @@
         "ignoreVary": true
       },
       "urls": [
+        "/yardage/chunk-6DPTZHN4.js",
+        "/yardage/chunk-JQA6IJPS.js",
         "/yardage/favicon.ico",
         "/yardage/index.html",
-        "/yardage/main-B34OOX47.js",
+        "/yardage/main-HSH6A6FY.js",
         "/yardage/manifest.webmanifest",
-        "/yardage/styles-ZK3SPRP3.css"
+        "/yardage/styles-ADDXXTJN.css"
       ],
       "patterns": []
     },
@@ -27,33 +29,40 @@
         "ignoreVary": true
       },
       "urls": [
-        "/yardage/icons/icon-128x128.png",
-        "/yardage/icons/icon-144x144.png",
-        "/yardage/icons/icon-152x152.png",
-        "/yardage/icons/icon-192x192.png",
-        "/yardage/icons/icon-384x384.png",
-        "/yardage/icons/icon-512x512.png",
-        "/yardage/icons/icon-72x72.png",
-        "/yardage/icons/icon-96x96.png"
+        "/yardage/media/layers-2x-TBM42ERR.png",
+        "/yardage/media/layers-55W3Q4RM.png",
+        "/yardage/media/marker-icon-2V3QKKVC.png"
       ],
       "patterns": []
     }
   ],
-  "dataGroups": [],
+  "dataGroups": [
+    {
+      "name": "courses",
+      "patterns": [
+        "https:\\/\\/raw\\.githubusercontent\\.com\\/[^/]*\\/[^/]*\\/main\\/courses\\.json"
+      ],
+      "strategy": "freshness",
+      "maxSize": 10,
+      "maxAge": 31536000000,
+      "timeoutMs": 1000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
   "hashTable": {
+    "/yardage/chunk-6DPTZHN4.js": "473dd8bcdf424070ae3995bccf232a961ece6fdb",
+    "/yardage/chunk-JQA6IJPS.js": "8c3ecf849c51bde4b8a6be2602de0e553a4492da",
     "/yardage/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
-    "/yardage/icons/icon-128x128.png": "f912963bdc6d5a38d8f1dd0afbaab2ce8d657acb",
-    "/yardage/icons/icon-144x144.png": "b155fd5f2fd5d2ea7760721063003c4cd95fd783",
-    "/yardage/icons/icon-152x152.png": "eae6e0f0c8afb8aaae339e2a569b43e9238e5e6c",
-    "/yardage/icons/icon-192x192.png": "15c4180454633880d98674aa7394656196c91584",
-    "/yardage/icons/icon-384x384.png": "94a915751ef6c9282df9aea405ad679230631814",
-    "/yardage/icons/icon-512x512.png": "1de182f76f7329dfa8f9fcdd1fdcdd695bea6a99",
-    "/yardage/icons/icon-72x72.png": "aa88a6096bd973be7f6d7a5489bfa6bc2463f8c4",
-    "/yardage/icons/icon-96x96.png": "7fb8f59c30ce2ff12c700321a0b39e14b3dc8f95",
-    "/yardage/index.html": "f678d9bdcc4ab61cb3ca0220e272f566b70c2f8d",
-    "/yardage/main-B34OOX47.js": "ae55785dd4e8089d3230f45ab91d43f81743d2ed",
+    "/yardage/index.html": "35d96030d7807f76297439c7ebee388890b15f98",
+    "/yardage/main-HSH6A6FY.js": "a13c59a383e83514c2957110f2b9fde472307054",
     "/yardage/manifest.webmanifest": "eb48d572c6926f187869b59cd45c850043232398",
-    "/yardage/styles-ZK3SPRP3.css": "c1364901a6de62dcffe1d43e9224b8e2b1f94a92"
+    "/yardage/media/layers-2x-TBM42ERR.png": "152a162333e46d24f9d89f566312fc0c64011dee",
+    "/yardage/media/layers-55W3Q4RM.png": "c9e7528e491a39232ba24a2706c6c739d6fb0f06",
+    "/yardage/media/marker-icon-2V3QKKVC.png": "60a90bcbb2b42b7ddb4556db94eb7c1084b0e5da",
+    "/yardage/styles-ADDXXTJN.css": "54b080e5ddddff51ea609f2eac6c89669d584e9d"
   },
   "navigationUrls": [
     {

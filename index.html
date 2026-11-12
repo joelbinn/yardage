@@ -1,15 +1,24 @@
 <!doctype html>
-<html lang="sv" data-beasties-container>
+<html lang="sv">
 <head>
   <meta charset="utf-8">
+  <!--
+    Strikt Content Security Policy (ticket 07, ADR-0003). Endast i produktionsbygget:
+    GitHub Pages kan inte sätta HTTP-headers. ng serve använder src/index.html utan policy
+    (dev-serverns HMR/websocket skulle annars kräva undantag).
+    Skript enbart från eget origin; connect-src = data-repots läsning och skrivning.
+    style-src tillåter inline eftersom Angular lägger komponentstilar i <style>-element.
+    Kritisk CSS inlinas inte (inlineCritical: false) - den kräver en inline onload-hanterare.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://server.arcgisonline.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>Yardage</title>
   <base href="/yardage/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="manifest" href="manifest.webmanifest">
-<style>:root{color-scheme:light}body{margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;color:#111827;background-color:#fafafa}</style><link rel="stylesheet" href="styles-ZK3SPRP3.css" media="print" data-beasties-media="all"><noscript><link rel="stylesheet" href="styles-ZK3SPRP3.css"></noscript></head>
+<link rel="stylesheet" href="styles-ADDXXTJN.css"></head>
 <body>
   <app-root></app-root>
   <noscript>Vänligen aktivera JavaScript för att köra Yardage.</noscript>
-<script src="main-B34OOX47.js" type="module"></script><script>document.querySelectorAll('link[data-beasties-media]').forEach(function(l){l.media=l.getAttribute('data-beasties-media');l.removeAttribute('data-beasties-media')})</script></body>
+<script src="main-HSH6A6FY.js" type="module"></script></body>
 </html>
