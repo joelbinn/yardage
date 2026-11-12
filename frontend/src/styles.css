@@ -189,34 +189,6 @@ fieldset.field legend {
   color: #15803d;
 }
 
-/* Banlista */
-.course-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.course-list li {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  font-size: 1.125rem;
-}
-
-.course-name {
-  font-weight: 600;
-}
-
-.course-holes {
-  color: #4b5563;
-}
-
 /* Greenpunkt-markörer i karteditorn (Leaflet-divIcon, ligger utanför komponentens vy). */
 .green-point-marker {
   display: flex;

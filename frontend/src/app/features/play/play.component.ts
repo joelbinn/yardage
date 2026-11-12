@@ -14,31 +14,45 @@ import { dataRepoKey } from '../../domain/data-repo';
   selector: 'app-play',
   imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrl: './play.component.css',
   template: `
     <section>
       <h2>Spelläge</h2>
       @switch (state()?.kind) {
         @case ('loaded') {
-          <label for="course-query">Sök bana</label>
-          <input
-            id="course-query"
-            type="search"
-            autocomplete="off"
-            [value]="query()"
-            (input)="query.set($any($event.target).value)"
-          />
+          <div class="search">
+            <label for="course-query" class="sr-only">Sök bana</label>
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input
+              id="course-query"
+              type="search"
+              autocomplete="off"
+              placeholder="Sök bana"
+              [value]="query()"
+              (input)="query.set($any($event.target).value)"
+            />
+          </div>
           @if (positionUnavailable()) {
             <p class="hint">Platsåtkomst saknas — banorna visas i bokstavsordning.</p>
           }
-          <ul aria-label="Banor">
+          <ul aria-label="Banor" class="course-cards">
             @for (course of courses(); track course.id) {
               <li>
-                <a [routerLink]="['/play', course.id]">{{ course.name }} — {{ course.holes.length }} hål</a>
+                <a class="course-card" [routerLink]="['/play', course.id]">
+                  <span class="course-card-name">{{ course.name }}</span>
+                  <span class="course-card-meta">{{ course.holes.length }} hål</span>
+                  <svg class="course-card-chevron" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m9 6 6 6-6 6" />
+                  </svg>
+                </a>
               </li>
             }
           </ul>
           @if (courses().length === 0) {
-            <p>Inga banor matchar sökningen.</p>
+            <p class="empty">Inga banor matchar sökningen.</p>
           }
         }
         @case ('not-configured') {
@@ -59,7 +73,7 @@ import { dataRepoKey } from '../../domain/data-repo';
         }
       }
       @if (repoLabel()) {
-        <button type="button" class="btn btn-subtle" (click)="sync()" [disabled]="catalogResource.isLoading()">
+        <button type="button" class="btn btn-subtle sync" (click)="sync()" [disabled]="catalogResource.isLoading()">
           Synka banor
         </button>
       }
