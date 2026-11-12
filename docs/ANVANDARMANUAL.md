@@ -49,7 +49,9 @@ Välj **Redigeringsläge** på startsidan.
 
 ### 2.2 Sätt greenpunkterna
 
-1. Tryck **Redigera** vid banan. En satellitkarta och en lista över banans hål visas.
+Redigeringsläget fyller hela fönstret: panelen till vänster med banor, hål, par, skapa och spara, och satellitkartan i resten av ytan. Tryck **Dölj panel** (uppe till vänster i kartan) för att ge kartan hela bredden, och **Visa panel** för att få tillbaka den.
+
+1. Tryck **Redigera** vid banan. Kartan och en lista över banans hål visas.
 2. Det aktiva hålet är markerat i listan. Zooma in på greenen och **klicka mitt på den**. Greenpunkten sätts och appen går vidare till nästa hål.
 3. Upprepa för alla hål. Hål som ännu saknar punkt är märkta *"— greenpunkt saknas"*.
 4. **Korrigera** en punkt genom att dra markören, eller välj hålet i listan och klicka på rätt ställe.

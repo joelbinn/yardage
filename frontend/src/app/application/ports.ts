@@ -67,6 +67,8 @@ export interface ICourseMap {
   showMarkers(markers: readonly GreenPointMarker[]): void;
   /** Zoomar in kartan så att alla punkter syns; tom lista lämnar vyn orörd. */
   fitTo(points: readonly GreenPoint[]): void;
+  /** Kartans värdelement har ändrat storlek (t.ex. panel fälld): räkna om vyn. */
+  resize(): void;
   destroy(): void;
 }
 

@@ -1,13 +1,80 @@
-.layout {
+/* Redigeraren fyller .app-main: sidopanel + karta, kartan tar resten. */
+.editor {
+  position: relative;
+  height: 100%;
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: 20rem minmax(0, 1fr);
+  gap: 1rem;
 }
 
-@media (min-width: 960px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
+.editor.panel-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.editor-panel {
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.editor-panel[hidden] {
+  display: none;
+}
+
+.editor-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+
+.panel-section {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.panel-toggle {
+  position: absolute;
+  /* Under Leafletts zoomknappar (uppe till vänster i kartan). */
+  top: 5.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  background-color: #ffffff;
+}
+
+.editor:not(.panel-collapsed) .panel-toggle {
+  left: calc(20rem + 1rem + 0.5rem);
+}
+
+.editor-map {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+.map-hint {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  margin: 0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  background-color: rgba(255, 255, 255, 0.92);
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+.map-placeholder {
+  margin: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #4b5563;
 }
 
 .edit-courses {
@@ -44,23 +111,6 @@
   padding: 0;
   columns: 2;
   column-gap: 0.25rem;
-}
-
-.map-editor {
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 1rem;
-}
-
-@media (min-width: 960px) {
-  .map-editor {
-    grid-template-columns: 18rem minmax(0, 1fr);
-    align-items: start;
-  }
-}
-
-.map-editor-panel h3 {
-  margin-top: 0;
 }
 
 .hole-button {

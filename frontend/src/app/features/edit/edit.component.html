@@ -1,97 +1,55 @@
-<section class="page">
-  <h2>Redigeringsläge</h2>
+@if (canEdit()) {
+  <div class="editor" [class.panel-collapsed]="panelCollapsed()">
+    <button
+      type="button"
+      class="btn btn-small panel-toggle"
+      aria-controls="editor-panel"
+      [attr.aria-expanded]="!panelCollapsed()"
+      (click)="togglePanel()"
+    >
+      {{ panelCollapsed() ? 'Visa panel' : 'Dölj panel' }}
+    </button>
 
-  @if (canEdit()) {
-    @if (status() === 'missing') {
-      <p class="message" role="status">
-        Data-repot har ännu inget ban-dokument (courses.json). Skapa den första banan nedan.
-      </p>
-    }
-    <div class="layout">
-      <div>
-        <section class="card" aria-labelledby="courses-heading">
-          <h3 id="courses-heading">Banor</h3>
-          @if (courses().length === 0) {
-            <p class="hint">Inga banor registrerade ännu.</p>
-          }
-          <ul aria-label="Banor" class="edit-courses">
-            @for (course of courses(); track course.id) {
-              <li [class.active]="selected()?.id === course.id">
-                <span class="edit-course-name"
-                  >{{ course.name }} — {{ course.holes.length }} hål</span
-                >
-                <button
-                  type="button"
-                  class="btn btn-small"
-                  [attr.aria-label]="'Redigera ' + course.name"
-                  (click)="select(course.id)"
-                >
-                  Redigera
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-small btn-subtle"
-                  [attr.aria-label]="'Ta bort ' + course.name"
-                  (click)="remove(course.id)"
-                >
-                  Ta bort
-                </button>
-              </li>
-            }
-          </ul>
-        </section>
+    <aside id="editor-panel" class="editor-panel" [hidden]="panelCollapsed()">
+      <h2>Redigeringsläge</h2>
+      @if (status() === 'missing') {
+        <p class="message" role="status">
+          Data-repot har ännu inget ban-dokument (courses.json). Skapa den första banan nedan.
+        </p>
+      }
 
-        <section class="card" aria-labelledby="create-heading">
-          <h3 id="create-heading">Skapa bana</h3>
-          <form [formGroup]="createForm" (ngSubmit)="create()" class="form">
-            <label class="field">
-              <span>Namn</span>
-              <input formControlName="name" autocomplete="off" />
-            </label>
-            <fieldset class="field">
-              <legend>Hålantal</legend>
-              @for (count of holeCounts; track count) {
-                <label class="radio">
-                  <input type="radio" formControlName="holeCount" [value]="count" />
-                  {{ count }} hål
-                </label>
-              }
-            </fieldset>
-            <button type="submit" class="btn btn-primary">Skapa bana</button>
-          </form>
-          @if (createError(); as error) {
-            <p role="alert" class="message error">{{ error }}</p>
+      <section class="panel-section" aria-labelledby="courses-heading">
+        <h3 id="courses-heading">Banor</h3>
+        @if (courses().length === 0) {
+          <p class="hint">Inga banor registrerade ännu.</p>
+        }
+        <ul aria-label="Banor" class="edit-courses">
+          @for (course of courses(); track course.id) {
+            <li [class.active]="selected()?.id === course.id">
+              <span class="edit-course-name">{{ course.name }} — {{ course.holes.length }} hål</span>
+              <button
+                type="button"
+                class="btn btn-small"
+                [attr.aria-label]="'Redigera ' + course.name"
+                (click)="select(course.id)"
+              >
+                Redigera
+              </button>
+              <button
+                type="button"
+                class="btn btn-small btn-subtle"
+                [attr.aria-label]="'Ta bort ' + course.name"
+                (click)="remove(course.id)"
+              >
+                Ta bort
+              </button>
+            </li>
           }
-        </section>
+        </ul>
+      </section>
 
-        <section class="card" aria-labelledby="save-heading">
-          <h3 id="save-heading">Spara</h3>
-          <p class="hint">
-            Hela ban-dokumentet skrivs till data-repot och ersätter det som finns där.
-          </p>
-          @if (!hasToken()) {
-            <p class="hint">
-              Sparning kräver en GitHub-token. <a routerLink="/settings">Lägg in den under Inställningar.</a>
-            </p>
-          }
-          <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="save()">
-            {{ saving() ? 'Sparar…' : 'Spara banor' }}
-          </button>
-          @if (saveFeedback(); as feedback) {
-            <p [attr.role]="feedback.error ? 'alert' : 'status'" [class.error]="feedback.error" class="message">
-              {{ feedback.text }}
-            </p>
-            @if (feedback.toSettings) {
-              <a routerLink="/settings">Gå till Inställningar</a>
-            }
-          }
-        </section>
-      </div>
-    </div>
-
-    @if (selected(); as course) {
-      <section class="card map-editor" aria-label="Vald bana">
-        <div class="map-editor-panel">
+      @if (selected(); as course) {
+        <section class="panel-section" aria-label="Vald bana">
           <h3>{{ course.name }}</h3>
           <p class="hint">Klicka på kartan för att sätta greenpunkten för aktivt hål.</p>
           <ol class="hole-list">
@@ -111,7 +69,6 @@
               </li>
             }
           </ol>
-
           @if (activeHole(); as hole) {
             <section class="active-hole" aria-label="Aktivt hål">
               <h4>Hål {{ hole.number }}</h4>
@@ -139,17 +96,75 @@
               }
             </section>
           }
-        </div>
+        </section>
+      }
+
+      <section class="panel-section" aria-labelledby="create-heading">
+        <h3 id="create-heading">Skapa bana</h3>
+        <form [formGroup]="createForm" (ngSubmit)="create()" class="form">
+          <label class="field">
+            <span>Namn</span>
+            <input formControlName="name" autocomplete="off" />
+          </label>
+          <fieldset class="field">
+            <legend>Hålantal</legend>
+            @for (count of holeCounts; track count) {
+              <label class="radio">
+                <input type="radio" formControlName="holeCount" [value]="count" />
+                {{ count }} hål
+              </label>
+            }
+          </fieldset>
+          <button type="submit" class="btn btn-primary">Skapa bana</button>
+        </form>
+        @if (createError(); as error) {
+          <p role="alert" class="message error">{{ error }}</p>
+        }
+      </section>
+
+      <section class="panel-section" aria-labelledby="save-heading">
+        <h3 id="save-heading">Spara</h3>
+        <p class="hint">Hela ban-dokumentet skrivs till data-repot och ersätter det som finns där.</p>
+        @if (!hasToken()) {
+          <p class="hint">
+            Sparning kräver en GitHub-token. <a routerLink="/settings">Lägg in den under Inställningar.</a>
+          </p>
+        }
+        <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="save()">
+          {{ saving() ? 'Sparar…' : 'Spara banor' }}
+        </button>
+        @if (saveFeedback(); as feedback) {
+          <p [attr.role]="feedback.error ? 'alert' : 'status'" [class.error]="feedback.error" class="message">
+            {{ feedback.text }}
+          </p>
+          @if (feedback.toSettings) {
+            <a routerLink="/settings">Gå till Inställningar</a>
+          }
+        }
+      </section>
+
+      <a routerLink="/" class="back-link">Tillbaka till start</a>
+    </aside>
+
+    <div class="editor-map">
+      @if (selected(); as course) {
         <app-course-map
-          class="map-editor-map"
           [course]="course"
           [activeHoleNumber]="activeHole()?.number ?? null"
           (mapClicked)="placeGreenPoint($event)"
           (greenPointMoved)="moveGreenPoint($event)"
         />
-      </section>
-    }
-  } @else {
+        @if (activeHole(); as hole) {
+          <p class="map-hint" aria-hidden="true">Klicka på green för hål {{ hole.number }}</p>
+        }
+      } @else {
+        <p class="map-placeholder">Välj eller skapa en bana för att visa kartan.</p>
+      }
+    </div>
+  </div>
+} @else {
+  <section class="page">
+    <h2>Redigeringsläge</h2>
     @switch (status()) {
       @case ('not-configured') {
         <p role="alert">Inget data-repo är inställt.</p>
@@ -165,7 +180,6 @@
         <p>Hämtar banor…</p>
       }
     }
-  }
-
-  <a routerLink="/" class="back-link">Tillbaka till start</a>
-</section>
+    <a routerLink="/" class="back-link">Tillbaka till start</a>
+  </section>
+}

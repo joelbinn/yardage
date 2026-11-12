@@ -80,6 +80,10 @@ class LeafletCourseMap implements ICourseMap {
     this.map.fitBounds(bounds, { padding: [32, 32], maxZoom: FIT_MAX_ZOOM });
   }
 
+  resize(): void {
+    this.map.invalidateSize();
+  }
+
   destroy(): void {
     this.map.remove();
   }

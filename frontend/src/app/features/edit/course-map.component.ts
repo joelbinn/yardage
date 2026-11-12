@@ -41,10 +41,13 @@ const greenPoints = (course: CourseDraft): GreenPoint[] =>
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div #host class="course-map" role="region" aria-label="Karta"></div>`,
   styles: `
+    :host {
+      display: block;
+      height: 100%;
+    }
     .course-map {
-      height: min(70vh, 40rem);
+      height: 100%;
       min-height: 20rem;
-      border-radius: 0.5rem;
       cursor: crosshair;
     }
   `,
@@ -77,6 +80,16 @@ export class CourseMapComponent {
       const map = this.map();
       this.courseId();
       untracked(() => map?.fitTo(greenPoints(this.course())));
+    });
+    // Kartan följer värdelementets storlek (fälld panel, ändrat fönster).
+    effect((onCleanup) => {
+      const map = this.map();
+      if (!map || typeof ResizeObserver === 'undefined') {
+        return;
+      }
+      const observer = new ResizeObserver(() => map.resize());
+      observer.observe(this.host().nativeElement);
+      onCleanup(() => observer.disconnect());
     });
     destroyRef.onDestroy(() => this.map()?.destroy());
   }

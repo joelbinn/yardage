@@ -20,3 +20,27 @@
   font-size: 1.75rem;
   letter-spacing: -0.02em;
 }
+
+/* Redigeringsläget: hela fönstret, kartan tar höjden under rubrikraden. */
+.app-shell.full-width {
+  max-width: none;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem 1rem;
+  box-sizing: border-box;
+}
+
+.app-shell.full-width .app-header {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.app-shell.full-width .brand h1 {
+  font-size: 1.25rem;
+}
+
+.app-shell.full-width .app-main {
+  flex: 1;
+  min-height: 0;
+}

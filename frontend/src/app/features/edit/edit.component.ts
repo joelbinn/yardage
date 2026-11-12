@@ -52,6 +52,7 @@ export class EditComponent {
   readonly courses = this.editor.courses;
   readonly selected = this.editor.selected;
   readonly activeHole = this.editor.activeHole;
+  readonly panelCollapsed = signal(false);
   readonly createError = signal<string | null>(null);
   readonly parError = signal<string | null>(null);
   readonly saving = this.editor.saving;
@@ -64,6 +65,10 @@ export class EditComponent {
     effect(() => {
       void this.editor.load(this.settings.dataRepo());
     });
+  }
+
+  togglePanel(): void {
+    this.panelCollapsed.update((collapsed) => !collapsed);
   }
 
   create(): void {

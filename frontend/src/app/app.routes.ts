@@ -7,7 +7,7 @@ import { SettingsComponent } from './features/settings/settings.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'edit', component: EditComponent },
+  { path: 'edit', component: EditComponent, data: { fullWidth: true } },
   { path: 'play', component: PlayComponent },
   { path: 'play/:courseId', component: PlayCourseComponent },
   { path: 'settings', component: SettingsComponent },
