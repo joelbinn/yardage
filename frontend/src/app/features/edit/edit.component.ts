@@ -55,6 +55,7 @@ export class EditComponent {
   readonly panelCollapsed = signal(false);
   readonly createError = signal<string | null>(null);
   readonly parError = signal<string | null>(null);
+  readonly nameError = signal<string | null>(null);
   readonly saving = this.editor.saving;
   readonly hasToken = this.settings.hasToken;
   readonly saveFeedback = signal<SaveFeedback | null>(null);
@@ -92,6 +93,7 @@ export class EditComponent {
   select(id: string): void {
     this.editor.select(id);
     this.parError.set(null);
+    this.nameError.set(null);
   }
 
   activateHole(holeNumber: number): void {
@@ -106,6 +108,13 @@ export class EditComponent {
 
   moveGreenPoint({ holeNumber, green }: MovedGreenPoint): void {
     this.editor.moveGreenPoint(holeNumber, green);
+  }
+
+  /** Byter namn på vald bana; ogiltigt namn ger ett fel och fältet återställs. */
+  rename(input: HTMLInputElement): void {
+    const result = this.editor.rename(input.value);
+    this.nameError.set(result.ok ? null : result.error);
+    input.value = this.selected()?.name ?? '';
   }
 
   /** Tomt fält tar bort par; annars tolkas värdet som tal och valideras i domänen. */

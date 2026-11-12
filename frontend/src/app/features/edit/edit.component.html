@@ -51,6 +51,19 @@
       @if (selected(); as course) {
         <section class="panel-section" aria-label="Vald bana">
           <h3>{{ course.name }}</h3>
+          <label class="field">
+            <span>Bannamn</span>
+            <input
+              type="text"
+              autocomplete="off"
+              [value]="course.name"
+              (change)="rename($any($event.target))"
+              (keydown.enter)="$any($event.target).blur()"
+            />
+          </label>
+          @if (nameError(); as error) {
+            <p role="alert" class="message error">{{ error }}</p>
+          }
           <p class="hint">Klicka på kartan för att sätta greenpunkten för aktivt hål.</p>
           <ol class="hole-list">
             @for (hole of course.holes; track hole.number) {

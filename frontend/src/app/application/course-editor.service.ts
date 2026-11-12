@@ -7,6 +7,7 @@ import {
   DraftHole,
   nextHoleNumber,
   placeGreenPoint,
+  renameCourse,
   setHolePar,
 } from '../domain/course-draft';
 import { DataRepo, dataRepoKey } from '../domain/data-repo';
@@ -145,6 +146,19 @@ export class CourseEditorService {
   /** Dragen markör: korrigerar ett befintligt håls greenpunkt. */
   moveGreenPoint(holeNumber: number, green: GreenPoint): void {
     this.updateSelected((draft) => placeGreenPoint(draft, holeNumber, green));
+  }
+
+  /** Byter namn på vald Bana; id:t består så att spara ersätter rätt bana i dokumentet. */
+  rename(name: string): CourseDraftResult {
+    const draft = this.selected();
+    if (!draft) {
+      return { ok: false, error: 'Ingen bana är vald.' };
+    }
+    const result = renameCourse(draft, name);
+    if (result.ok) {
+      this.updateSelected(() => result.value);
+    }
+    return result;
   }
 
   setPar(holeNumber: number, par: number | null): CourseDraftResult {

@@ -55,7 +55,8 @@ Redigeringsläget fyller hela fönstret: panelen till vänster med banor, hål, 
 2. Det aktiva hålet är markerat i listan. Zooma in på greenen och **klicka mitt på den**. Greenpunkten sätts och appen går vidare till nästa hål.
 3. Upprepa för alla hål. Hål som ännu saknar punkt är märkta *"— greenpunkt saknas"*.
 4. **Korrigera** en punkt genom att dra markören, eller välj hålet i listan och klicka på rätt ställe.
-5. **Par** kan anges per hål. Fältet är valfritt och visas inte i Spelläget.
+5. **Byt namn** på banan i fältet *Bannamn* i panelen (tryck Enter eller lämna fältet). Namnet får inte vara tomt. Banans interna id ändras inte, så Spara ersätter samma bana i data-repot.
+6. **Par** kan anges per hål. Fältet är valfritt och visas inte i Spelläget.
 
 En 18-hålsbana tar normalt under 15 minuter.
 

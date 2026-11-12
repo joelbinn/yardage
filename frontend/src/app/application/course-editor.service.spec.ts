@@ -365,4 +365,45 @@ describe('CourseEditorService', () => {
       expect(state.kind === 'loaded' && state.courses.map((c) => c.id)).toEqual(['ullna']);
     });
   });
+
+  describe('byta namn', () => {
+    it('should_rename_selected_course_and_keep_its_id_when_name_is_valid', async () => {
+      const { editor } = setup({ kind: 'loaded', courses: [course('ullna-gk', 'Ullna GK', 18)] });
+      await editor.load(REPO);
+      editor.select('ullna-gk');
+
+      const result = editor.rename('Ullna Golfklubb');
+
+      expect(result.ok).toBe(true);
+      expect(editor.selected()?.name).toBe('Ullna Golfklubb');
+      expect(editor.courses().map((c) => c.id)).toEqual(['ullna-gk']);
+    });
+
+    it('should_keep_name_when_new_name_is_empty', async () => {
+      const { editor } = setup({ kind: 'loaded', courses: [course('ullna-gk', 'Ullna GK', 18)] });
+      await editor.load(REPO);
+      editor.select('ullna-gk');
+
+      expect(editor.rename('  ')).toEqual({ ok: false, error: 'Ange ett namn på banan.' });
+      expect(editor.selected()?.name).toBe('Ullna GK');
+    });
+
+    it('should_refuse_when_no_course_is_selected', async () => {
+      const { editor } = setup();
+      await editor.load(REPO);
+
+      expect(editor.rename('Nytt namn')).toEqual({ ok: false, error: 'Ingen bana är vald.' });
+    });
+
+    it('should_save_the_new_name_when_saving_after_rename', async () => {
+      const { editor, writer } = setup({ kind: 'loaded', courses: [course('ullna-gk', 'Ullna GK', 18)] });
+      await editor.load(REPO);
+      editor.select('ullna-gk');
+      editor.rename('Ullna Golfklubb');
+
+      await editor.save();
+
+      expect(writer.writes[0].courses[0]).toMatchObject({ id: 'ullna-gk', name: 'Ullna Golfklubb' });
+    });
+  });
 });

@@ -12,6 +12,8 @@ export type CourseDraftResult =
   | { readonly ok: true; readonly value: CourseDraft }
   | { readonly ok: false; readonly error: string };
 
+const EMPTY_NAME_ERROR = 'Ange ett namn på banan.';
+
 /** Skapar en ny Bana med namngivna hål 1..N utan greenpunkter. */
 export function createCourseDraft(
   name: string,
@@ -20,7 +22,7 @@ export function createCourseDraft(
 ): CourseDraftResult {
   const trimmed = name.trim();
   if (trimmed === '') {
-    return { ok: false, error: 'Ange ett namn på banan.' };
+    return { ok: false, error: EMPTY_NAME_ERROR };
   }
   if (!ALLOWED_HOLE_COUNTS.includes(holeCount)) {
     return { ok: false, error: 'Hålantalet måste vara 9 eller 18.' };
@@ -34,6 +36,15 @@ export function createCourseDraft(
     holes: Object.freeze(holes),
   };
   return { ok: true, value: Object.freeze(draft) };
+}
+
+/** Byter namn på en Bana. Id och hål lämnas orörda — id:t är stabilt (specens datamodell). */
+export function renameCourse(draft: CourseDraft, name: string): CourseDraftResult {
+  const trimmed = name.trim();
+  if (trimmed === '') {
+    return { ok: false, error: EMPTY_NAME_ERROR };
+  }
+  return { ok: true, value: Object.freeze({ ...draft, name: trimmed }) };
 }
 
 /** Sätter (eller flyttar) greenpunkten för ett Hål. Okänt hålnummer lämnar banan orörd. */

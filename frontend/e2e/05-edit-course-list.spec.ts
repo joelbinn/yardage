@@ -104,4 +104,31 @@ test.describe('Ticket 05: Redigeringsläge — bankurslista + skapa Bana', () =>
     await page.getByRole('link', { name: 'Gå till Inställningar' }).click();
     await expect(page).toHaveURL(/\/settings$/);
   });
+
+  test('bannamnet kan ändras och visas i listan och rubriken', async ({ page }) => {
+    await openEditModeWithMockedRepo(page);
+    await page.getByRole('button', { name: 'Redigera Ullna GK' }).click();
+    const selected = page.getByRole('region', { name: 'Vald bana' });
+
+    await selected.getByLabel('Bannamn').fill('Ullna Golfklubb');
+    await selected.getByLabel('Bannamn').press('Enter');
+
+    await expect(selected.getByRole('heading', { name: 'Ullna Golfklubb' })).toBeVisible();
+    const items = page.getByRole('list', { name: 'Banor' }).getByRole('listitem');
+    await expect(items.nth(0)).toContainText('Ullna Golfklubb');
+    await expect(items.nth(0)).toContainText('18 hål');
+    await expect(page.getByRole('button', { name: 'Redigera Ullna Golfklubb' })).toBeVisible();
+  });
+
+  test('tomt bannamn ger felmeddelande och behåller det gamla namnet', async ({ page }) => {
+    await openEditModeWithMockedRepo(page);
+    await page.getByRole('button', { name: 'Redigera Ullna GK' }).click();
+    const selected = page.getByRole('region', { name: 'Vald bana' });
+
+    await selected.getByLabel('Bannamn').fill('   ');
+    await selected.getByLabel('Bannamn').press('Enter');
+
+    await expect(selected.getByRole('alert')).toHaveText('Ange ett namn på banan.');
+    await expect(selected.getByRole('heading', { name: 'Ullna GK' })).toBeVisible();
+  });
 });

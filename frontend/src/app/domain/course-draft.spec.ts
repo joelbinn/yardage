@@ -1,4 +1,4 @@
-import { createCourseDraft, placeGreenPoint, setHolePar } from './course-draft';
+import { createCourseDraft, placeGreenPoint, renameCourse, setHolePar } from './course-draft';
 
 describe('createCourseDraft', () => {
   it('should_create_course_with_holes_numbered_from_1_when_input_is_valid', () => {
@@ -118,5 +118,26 @@ describe('setHolePar', () => {
       ok: false,
       error: 'Par måste vara ett positivt heltal.',
     });
+  });
+});
+
+describe('renameCourse', () => {
+  it('should_change_name_and_keep_id_and_holes_when_name_is_valid', () => {
+    const draft = nineHoles();
+
+    const result = renameCourse(draft, '  Kortbanan Gul ');
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.name).toBe('Kortbanan Gul');
+      expect(result.value.id).toBe(draft.id);
+      expect(result.value.holes).toBe(draft.holes);
+      expect(Object.isFrozen(result.value)).toBe(true);
+    }
+    expect(draft.name).toBe('Kortbanan');
+  });
+
+  it.each(['', '   '])('should_reject_empty_name %j', (name) => {
+    expect(renameCourse(nineHoles(), name)).toEqual({ ok: false, error: 'Ange ett namn på banan.' });
   });
 });
